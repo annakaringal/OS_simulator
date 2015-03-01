@@ -39,7 +39,7 @@ class Device(DeviceQueue):
         return self._dev_name + " (" + self._dev_type.lower() + ")"
 
     def __str__(self):
-        return "{:<5}{:<68}".format(self._dev_name, self._dev_type)
+        return "{:<10}{:<68}".format(self._dev_name, self._dev_type)
 
     def snapshot(self):
         title = " " + self._dev_type.upper() + " " + self._dev_name.upper() + " QUEUE "
