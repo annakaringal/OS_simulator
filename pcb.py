@@ -10,6 +10,7 @@
 #                       and any parameters passed to it by a system call
 
 import sys
+import msg
 from sys_gen import set_valid_int
 
 class PCB:
@@ -53,7 +54,7 @@ class PCB:
                 elif rw.lower() in ["w", "write"]:
                     self.params["rw"] = "w"
                 else: 
-                    print "ERROR: Invalid read/write parameters."
+                    print msg.err("Invalid read/write parameters")
                     print "Please enter either 'r', 'read', 'w' or 'write'" + "\n"
 
         if self.params["rw"] == "w":
