@@ -34,7 +34,10 @@ class SysCommand(cmd.Cmd):
 		self.cpu = devices.CPU()
 		self.pid_count = 0
 
-		print "Your system is now running with the following devices: "
+		print "Your system is now running with the following devices: " + "\n"
+		print self.ruler(48)
+		print "{:<10}{:<38}".format("DEV NAME", "DEV TYPE")
+		print self.ruler(48)
 		for dev in self.all_devices: 
 			print dev
 
@@ -158,8 +161,7 @@ class SysCommand(cmd.Cmd):
 						print "%s completed %s" %(dev, proc)
 						self.ready.enqueue(proc)
 					except IndexError:
-						print "%s queue is empty" %dev
-						
+						print "%s queue is empty" %dev					
 
 		if not device_found: 
 			print "ERROR: Invalid Command"
@@ -179,6 +181,10 @@ class SysCommand(cmd.Cmd):
 	def do_EOF(self, line):
 		print "Goodbye!"
 		return True
+
+	## Formatting
+	def ruler(self, len=68):
+		return "{:-^{l}}".format("", l=len)
 
 	## Command shortcuts & aliases
 	do_A = do_a
