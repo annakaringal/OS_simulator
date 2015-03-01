@@ -84,8 +84,9 @@ class SysCommand(cmd.Cmd):
 					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 						dev.snapshot()
 
-			else: #TODO: ASK AGAIN IF NOT KNOWN DEV
+			else: 
 				print "ERROR: Unknown Device Type"
+				print "##### EXITING SNAPSHOT MODE"
 
 		else: 
 			print "ERROR: Invalid Command"
