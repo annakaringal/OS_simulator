@@ -116,8 +116,6 @@ class SysCommand(cmd.Cmd):
 	## User Command: Device request or unknown (Invalid) command
 	def default(self, args):
 
-		# TODO: IS THERE A WAY TO NOT NEST THIS???
-
 		device_found = False 
 
 		for dev in self.all_devices:
@@ -131,8 +129,7 @@ class SysCommand(cmd.Cmd):
 						try: 
 							proc = self.cpu.get_process()
 						except IndexError: 
-							print "No active process in the CPU"
-							# TO DO: CHECK: IS BREAK THE RIGHT THING?????? 
+							print "ERROR: No active process in the CPU" 
 							break
 
 						# Prompt user for and set PCB params 
