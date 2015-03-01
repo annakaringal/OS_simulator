@@ -10,13 +10,13 @@
 #                       and any parameters passed to it by a system call
 
 import sys
-from sys_gen import get_valid_int
+from sys_gen import set_valid_int
 
 class PCB:
 
     def __init__(self, id_num, p_loc="ready"): 
-    	self.pid = id_num
-    	self.proc_loc = p_loc
+        self.pid = id_num
+        self.proc_loc = p_loc
         self.param_fields = ["file_name","mem_loc","rw","file_len"]
         self.params = dict.fromkeys(self.param_fields)
 
@@ -34,14 +34,13 @@ class PCB:
     	return "process #" + str(self.pid)
 
     def status(self):
-		return "%s in %s queue" %(self, self.proc_loc)
+        return "%s in %s queue" %(self, self.proc_loc)
 
     ## Setting/clearing system call params for pcb
 
     def set_syst_call_params(self):
-        print "##### SET SYSTEM CALL PARAMETERS"
         self.params["file_name"] = raw_input("File Name: ")
-        get_valid_int(self.params["mem_loc"], "Starting Memory Location")
+        set_valid_int(self.params, "mem_loc", "Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
         if (dev_type.lower() == "printer"):
@@ -53,17 +52,14 @@ class PCB:
                     self.params["rw"] = "r"
                 elif rw.lower() in ["w", "write"]:
                     self.params["rw"] = "w"
-                else: # TODO: Loop to get valid input, also EXCEPT HANDLING? 
+                else: 
                     print "ERROR: Invalid read/write parameters."
-                    print "Please enter either 'r', 'read', 'w' or 'write'"
+                    print "Please enter either 'r', 'read', 'w' or 'write'" + "\n"
 
         if self.params["rw"] == "w":
-            get_valid_int(self.params["file_len"], "File Length")
+            set_valid_int(self.params, "file_len", "File Length")
 
     def clear_params(self): # TODO: FIGURE OUT WHEN NEED TO DO THIS
         """ Clears all system call & read/write params """
         for p in self.params:
             self.params[p] = None
-
-
-

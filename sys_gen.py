@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 # 
 # Author:			Anna Cristina Karingal
 # Name:				sys_gen.py
@@ -11,22 +10,38 @@
 import sys
 import devices
 
+def set_valid_int(dict, key, prompt):
+	""" Sets value of dictionary key to a positive integer given by user. 
+
+	Checks user input to ensure it is a positive integer value. Keeps
+	prompting user until a valid value is entered.
+	"""
+	while dict[key] == None: 
+		try: 
+			num = int(input(prompt + ": "))
+			# Check to see if positive whole number
+			if num <= 0: raise ValueError
+			dict[key] = num
+		except:
+			print "ERROR: Please enter a positive integer."
+
 def generate(types_of_dev): 
 	""" Generates all system device instances based on user input. 
-	   Returns list of all system devices. """
+		Returns list of all system devices. """
 
 	print "##### SYSTEM SETUP #####" + "\n"
 
 	# Dictionary of type of devices and how many devices of each type
 	system_device_types = {}
 
-	for d in types_of_dev: 
-		
+	print "For each device type, please specify the number of devices."
+
+	for d in types_of_dev: 	
 		# Add device type & how many of each type 
 		system_device_types[d] = None
-        get_valid_int(system_device_types[d], "How many %ss? " %d)
+		set_valid_int(system_device_types, d, d)
 
-	# List of all individual devices in system
+    # List of all individual devices in system
 	system_devices = []
 
 	for dev_type, num_of_dev in system_device_types.iteritems(): 
@@ -42,16 +57,4 @@ def generate(types_of_dev):
 
 	return system_devices
 
-def get_valid_int(var, prompt):
-	new_int = None
-	while new_int == None:
-		try: 
-			if var.isdigit():
-				new_int = int(raw_input(prompt + ": "))
-			else: 
-				raise TypeError
-		except:
-			print "ERROR: Please enter a positiive integer."
-		else: 
-			var = new_int
 

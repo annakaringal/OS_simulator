@@ -89,8 +89,8 @@ class SysCommand(cmd.Cmd):
 	## User Command: Queue Snapshot
 	def do_s(self, args):
 
-		if not args: 
-			print "\n" + "##### SNAPSHOT MODE"
+		if not args:
+			print "##### SNAPSHOT MODE"
 			type_to_snapshot = raw_input("Device Type: ").lower()
 
 			if type_to_snapshot == "r": 
@@ -103,7 +103,7 @@ class SysCommand(cmd.Cmd):
 
 			else: 
 				print "ERROR: Unknown Device Type"
-				print "##### EXITING SNAPSHOT MODE"
+				print "##### EXITING SNAPSHOT MODE" + "\n"
 
 		else: 
 			print "ERROR: Invalid Command"
@@ -136,8 +136,11 @@ class SysCommand(cmd.Cmd):
 							break
 
 						# Prompt user for and set PCB params 
+
+						print "\n" + "##### SET SYSTEM CALL PARAMETERS"
 						proc.set_syst_call_params()
 						proc.set_read_write_params(dev.get_dev_type())
+						print "SYSTEM CALL PARAMETERS SET ##### " + "\n"
 
 						# Add process to back of device queue
 						dev.enqueue(proc)
@@ -155,11 +158,11 @@ class SysCommand(cmd.Cmd):
 					# Remove from device queue, move to back of ready queue
 					try: 
 						proc = dev.dequeue()
+						print "%s completed %s" %(dev, proc)
 						self.ready.enqueue(proc)
 					except IndexError:
 						print "%s queue is empty" %dev
-					else:
-						print "%s completed %s" %(dev, proc)
+						
 
 		if not device_found: 
 			print "ERROR: Invalid Command"
@@ -167,7 +170,7 @@ class SysCommand(cmd.Cmd):
 	## User Command: Exit
 	def do_quit(self, args):
 		if not args: 
-			print "   Goodbye!"
+			print "Goodbye!"
 			raise SystemExit
 		else: 
 			print "ERROR: Invalid Command"
