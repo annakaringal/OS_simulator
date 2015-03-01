@@ -9,7 +9,7 @@
 #					in system based on user input
 
 import sys
-from devices import Device
+import devices
 
 def generate(types_of_dev): 
 	""" Generates all system device instances based on user input. 
@@ -24,12 +24,7 @@ def generate(types_of_dev):
 		
 		# Add device type & how many of each type 
 		system_device_types[d] = None
-
-		while system_device_types[d] == None:
-			try:
-				system_device_types[d] = validate_int(input("How many %ss? " %d))
-			except:
-				print "ERROR: Invalid entry. Please enter a positive integer."
+        get_valid_int(system_device_types[d], "How many %ss? " %d)
 
 	# List of all individual devices in system
 	system_devices = []
@@ -40,20 +35,23 @@ def generate(types_of_dev):
 		# Create new device, add to list of system_devices
 		for i in range(num_of_dev):
 			name = name_prefix + str(i+1)
-			system_devices.append(Device(name, dev_type))
+			system_devices.append(devices.Device(name, dev_type))
 
 
 	print "\n" + "##### SYSTEM GENERATION COMPLETE #####"
 
 	return system_devices
 
-def validate_int(s):
-	""" 
-	If a given string is a positive integer, returns value of string.
-	Else throws exception.
-	"""
-	if s.isdigit(): # Check if string contains ONLY digits, i.e. no - or .
-		new_int = int(s) # Will throw excep if fails
-		return new_int
-	else: 
-		raise TypeError
+def get_valid_int(var, prompt):
+	new_int = None
+	while new_int == None:
+		try: 
+			if var.isdigit():
+				new_int = int(raw_input(prompt + ": "))
+			else: 
+				raise TypeError
+		except:
+			print "ERROR: Please enter a positiive integer."
+		else: 
+			var = new_int
+

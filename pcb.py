@@ -10,7 +10,7 @@
 #                       and any parameters passed to it by a system call
 
 import sys
-from sys_gen import validate_int
+from sys_gen import get_valid_int
 
 class PCB:
 
@@ -40,29 +40,25 @@ class PCB:
 
     def set_syst_call_params(self):
         print "##### SET SYSTEM CALL PARAMETERS"
-        # TODO: ERROR CHECKING & FORMATTING
         self.params["file_name"] = raw_input("File Name: ")
-        while self.params["mem_loc"] = None
-            try: 
-                self.params["mem_loc"] = validate_int(input("Starting Memory Location: "))
-                if mloc < 0: raise ValueError
-            except: 
-                print "ERROR: Invalid entry. Please enter a positive integer."
+        get_valid_int(self.params["mem_loc"], "Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
         if (dev_type.lower() == "printer"):
             self.params["rw"] = "w"
         else: 
-            rw = raw_input("Read or Write?: ")
-            if rw.lower() in ["r", "read"]:
-                self.params["rw"] = "r"
-            elif rw.lower() in ["w", "write"]:
-                self.params["rw"] = "w"
-            else: # TODO: Loop to get valid input, also EXCEPT HANDLING? 
-                print "ERROR: Invalid read/write parameters"
+            while self.params["rw"] == None:
+                rw = raw_input("Read or Write?: ")
+                if rw.lower() in ["r", "read"]:
+                    self.params["rw"] = "r"
+                elif rw.lower() in ["w", "write"]:
+                    self.params["rw"] = "w"
+                else: # TODO: Loop to get valid input, also EXCEPT HANDLING? 
+                    print "ERROR: Invalid read/write parameters."
+                    print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
-            self.params["file_len"] = raw_input ("File Length: ")
+            get_valid_int(self.params["file_len"], "File Length")
 
     def clear_params(self): # TODO: FIGURE OUT WHEN NEED TO DO THIS
         """ Clears all system call & read/write params """

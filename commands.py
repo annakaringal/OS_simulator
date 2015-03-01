@@ -10,7 +10,9 @@
 #						actions on system devices, queues and processes 
 #						based on input.
 
-import sys, cmd
+import sys
+import cmd
+
 import devices
 import queues
 import sys_gen
