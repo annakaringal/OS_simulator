@@ -22,17 +22,14 @@ def generate(types_of_dev):
 
 	for d in types_of_dev: 
 		
-		# Adds device type & how many of each type 
+		# Add device type & how many of each type 
 		system_device_types[d] = None
 
 		while system_device_types[d] == None:
 			try:
-				num_of_d = int(input("How many %ss? " %d))
-				if num_of_d <= 0: raise ValueError
+				system_device_types[d] = validate_int(input("How many %ss? " %d))
 			except:
 				print "ERROR: Invalid entry. Please enter a positive integer."
-			else: 
-				system_device_types[d] = num_of_d
 
 	# List of all individual devices in system
 	system_devices = []
@@ -49,3 +46,14 @@ def generate(types_of_dev):
 	print "\n" + "##### SYSTEM GENERATION COMPLETE #####"
 
 	return system_devices
+
+def validate_int(s):
+	""" 
+	If a given string is a positive integer, returns value of string.
+	Else throws exception.
+	"""
+	if s.isdigit(): # Check if string contains ONLY digits, i.e. no - or .
+		new_int = int(s) # Will throw excep if fails
+		return new_int
+	else: 
+		raise TypeError

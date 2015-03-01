@@ -10,6 +10,7 @@
 #                       and any parameters passed to it by a system call
 
 import sys
+from sys_gen import validate_int
 
 class PCB:
 
@@ -41,7 +42,12 @@ class PCB:
         print "##### SET SYSTEM CALL PARAMETERS"
         # TODO: ERROR CHECKING & FORMATTING
         self.params["file_name"] = raw_input("File Name: ")
-        self.params["mem_loc"] = raw_input("Starting Memory Location: ")
+        while self.params["mem_loc"] = None
+            try: 
+                self.params["mem_loc"] = validate_int(input("Starting Memory Location: "))
+                if mloc < 0: raise ValueError
+            except: 
+                print "ERROR: Invalid entry. Please enter a positive integer."
 
     def set_read_write_params(self, dev_type):
         if (dev_type.lower() == "printer"):
