@@ -13,14 +13,16 @@ def generate(types_of_dev):
 	for d in types_of_dev: 
 		
 		# Adds device type & how many of each type 
-		# TODO: KEEP TRYING UNTIL ACCEPTABLE INPUT
-		try:
-			num_of_d = int(input("How many %ss? " %d))
-		except:
-			print "\n" + "ERROR: Invalid entry. Please enter an integer."
-		else: 
-			system_device_types[d] = num_of_d
-			#break
+		system_device_types[d] = None
+
+		while system_device_types[d] == None:
+			try:
+				num_of_d = int(input("How many %ss? " %d))
+				if num_of_d <= 0: raise ValueError
+			except:
+				print "ERROR: Invalid entry. Please enter a positive integer."
+			else: 
+				system_device_types[d] = num_of_d
 
 	# List of all individual devices in system
 	system_devices = []
