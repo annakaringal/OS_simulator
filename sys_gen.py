@@ -9,6 +9,7 @@
 
 import sys
 import devices
+import msg
 
 def set_valid_int(dict, key, prompt):
 	""" Sets value of dictionary key to a positive integer given by user. 
@@ -23,13 +24,13 @@ def set_valid_int(dict, key, prompt):
 			if num <= 0: raise ValueError
 			dict[key] = num
 		except:
-			print "ERROR: Please enter a positive integer."
+			print msg.err("Please enter a valid positive integer")
 
 def generate(types_of_dev): 
 	""" Generates all system device instances based on user input. 
 		Returns list of all system devices. """
 
-	print "##### SYSTEM SETUP #####" + "\n"
+	print msg.sys_mode("System Setup")
 
 	# Dictionary of type of devices and how many devices of each type
 	system_device_types = {}
@@ -52,8 +53,7 @@ def generate(types_of_dev):
 			name = name_prefix + str(i+1)
 			system_devices.append(devices.Device(name, dev_type))
 
-
-	print "\n" + "##### SYSTEM GENERATION COMPLETE #####"
+	print msg.sys_mode("System Generation Complete")
 
 	return system_devices
 

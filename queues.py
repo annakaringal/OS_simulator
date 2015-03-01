@@ -20,7 +20,6 @@ class DeviceQueue:
     	self._q = deque()
 
     def enqueue(self, proc):
-    	### TODO: CHECK IF PROCESS IS A PCB
     	""" Add process to end of queue """
     	self._q.append(proc)
 

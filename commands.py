@@ -16,6 +16,7 @@ import cmd
 import devices
 import queues
 import sys_gen
+import msg
 from pcb import PCB
 
 #TODO: how to DRY if not args??? 
@@ -24,7 +25,7 @@ class SysCommand(cmd.Cmd):
 
 	def __init__(self):
 		cmd.Cmd.__init__(self)
-		self.prompt = " >> "
+		self.prompt = " COMMAND >> "
 
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
@@ -35,12 +36,11 @@ class SysCommand(cmd.Cmd):
 		self.pid_count = 0
 
 		print "Your system is now running with the following devices: " + "\n"
-		print self.ruler(48)
+		print msg.ruler(48)
 		print "{:<10}{:<38}".format("DEV NAME", "DEV TYPE")
-		print self.ruler(48)
+		print msg.ruler(48)
 		for dev in self.all_devices: 
 			print dev
-
 		print ""
 		## Now in the RUNNING PHASE
 
@@ -60,7 +60,7 @@ class SysCommand(cmd.Cmd):
 				self.ready.enqueue(new_proc)
 
 		else: 
-			print "ERROR: Invalid Command"
+			print msg.invalid_command()
 
 	def help_a(self):
 		print "A or a", 
@@ -75,15 +75,15 @@ class SysCommand(cmd.Cmd):
 			try:
 				self.cpu.terminate_process()
 			except IndexError: 
-				print "ERROR: No process to terminate in CPU."
+				print msg.nothing_in_cpu()
 
 			try: 
 				# Remove process from head of ready queue, moves to CPU
 				self.cpu.set_process(self.ready.dequeue())
 			except IndexError:
-				print "No processes in ready queue. CPU empty."
+				print msg.nothing_in_ready()
 		else: 
-			print "ERROR: Invalid Command"
+			print msg.invalid_command()
 
 	def help_t(self):
 		print "T or t", 
@@ -93,7 +93,7 @@ class SysCommand(cmd.Cmd):
 	def do_s(self, args):
 
 		if not args:
-			print "##### SNAPSHOT MODE"
+			print msg.sys_mode("Snapshot Mode")
 			type_to_snapshot = raw_input("Device Type: ").lower()
 
 			if type_to_snapshot == "r": 
@@ -103,13 +103,14 @@ class SysCommand(cmd.Cmd):
 				for dev in self.all_devices: 
 					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 						dev.snapshot()
+				print ""
 
 			else: 
-				print "ERROR: Unknown Device Type"
-				print "##### EXITING SNAPSHOT MODE" + "\n"
+				print msg.err("Unknown device type")
+				print ""
 
 		else: 
-			print "ERROR: Invalid Command"
+			print msg.invalid_command()
 
 	def help_s(self):
 		print "S or s", 
@@ -132,15 +133,15 @@ class SysCommand(cmd.Cmd):
 						try: 
 							proc = self.cpu.get_process()
 						except IndexError: 
-							print "ERROR: No active process in the CPU" 
+							print msg.nothing_in_cpu()
 							break
 
 						# Prompt user for and set PCB params 
 
-						print "\n" + "##### SET SYSTEM CALL PARAMETERS"
+						print msg.sys_mode("Set system call parameters")
 						proc.set_syst_call_params()
 						proc.set_read_write_params(dev.get_dev_type())
-						print "SYSTEM CALL PARAMETERS SET ##### " + "\n"
+						print msg.sys_mode("System call parameters set")
 
 						# Add process to back of device queue
 						dev.enqueue(proc)
@@ -149,9 +150,9 @@ class SysCommand(cmd.Cmd):
 						try: 
 							self.cpu.set_process(self.ready.dequeue())
 						except IndexError:
-							print "No processes in ready queue. CPU empty."
+							print msg.nothing_in_ready()
 					else: 
-						print "No process active in CPU"
+						print msg.nothing_in_cpu()
 
 				else:  # INTERRUPT  (uppercase input)
 					# Process at head of device queue complete
@@ -164,7 +165,7 @@ class SysCommand(cmd.Cmd):
 						print "%s queue is empty" %dev					
 
 		if not device_found: 
-			print "ERROR: Invalid Command"
+			print msg.invalid_command()
 
 	## User Command: Exit
 	def do_quit(self, args):
@@ -172,7 +173,7 @@ class SysCommand(cmd.Cmd):
 			print "Goodbye!"
 			raise SystemExit
 		else: 
-			print "ERROR: Invalid Command"
+			print msg.invalid_command()
 
 	def help_quit(self):
 		print "quit", 
@@ -181,10 +182,6 @@ class SysCommand(cmd.Cmd):
 	def do_EOF(self, line):
 		print "Goodbye!"
 		return True
-
-	## Formatting
-	def ruler(self, len=68):
-		return "{:-^{l}}".format("", l=len)
 
 	## Command shortcuts & aliases
 	do_A = do_a
