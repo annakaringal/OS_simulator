@@ -19,7 +19,10 @@ class CPU():
         print "%s is in the CPU" %self.active
 
     def get_process(self):
-        return self.active
+        if self.active:
+            return self.active
+        else: 
+            raise IndexError
 
     def terminate_process(self):
         if self.active: 
@@ -27,8 +30,8 @@ class CPU():
             proc = self.active
             del proc
             self.active = None
-        else: #TODO: THROW EXCEP
-            print "ERROR: No process in CPU"
+        else: 
+            raise IndexError
 
 class Device(DeviceQueue):
 

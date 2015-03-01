@@ -18,7 +18,7 @@ class DeviceQueue:
     	try: 
     		head = self._q.popleft()
     	except IndexError: 
-    		return "ERROR: Queue is empty"
+    		raise
     	else: 
     		return head
 

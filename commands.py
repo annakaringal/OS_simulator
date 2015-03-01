@@ -7,7 +7,7 @@ class SysCommand(cmd.Cmd):
 
 	def __init__(self):
 		cmd.Cmd.__init__(self)
-		self.prompt = "\n >> "
+		self.prompt = " >> "
 
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
@@ -21,6 +21,7 @@ class SysCommand(cmd.Cmd):
 		for dev in self.all_devices: 
 			print dev
 
+		print ""
 		## Now in the RUNNING PHASE
 
 
@@ -32,7 +33,7 @@ class SysCommand(cmd.Cmd):
 			self.pid_count += 1
 			new_proc = PCB(self.pid_count)
 
-			# Send process to CPU or ready queue
+			# Send process to CPU or ready queue based on what's in CPU
 			if self.cpu.empty():
 				self.cpu.set_process(new_proc)
 			else:
@@ -50,15 +51,17 @@ class SysCommand(cmd.Cmd):
 		""" Terminates current process in CPU"""
 
 		if not args: 
-			# Check CPU for emptiness before terminating process
-			if not self.cpu.empty():
+
+			try:
 				self.cpu.terminate_process()
+			except IndexError: 
+				print "ERROR: No process to terminate in CPU."
 
 			try: 
 				# Remove process from head of ready queue, moves to CPU
 				self.cpu.set_process(self.ready.dequeue())
-			except:
-				pass #TODO: THROW EXCEPT
+			except IndexError:
+				print "No processes in ready queue. CPU empty."
 		else: 
 			print "ERROR: Invalid Command"
 
@@ -106,8 +109,13 @@ class SysCommand(cmd.Cmd):
 				if self.lastcmd.islower(): # SYSTEM CALL (lowercase input)
 
 					# Get active process from CPU
-					if not self.cpu.empty(): #TODO: RAISE EXCEPT?
-						proc = self.cpu.get_process()
+					if not self.cpu.empty(): 
+						try: 
+							proc = self.cpu.get_process()
+						except IndexError: 
+							print "No active process in the CPU"
+							# TO DO: CHECK: IS BREAK THE RIGHT THING?????? 
+							break
 
 						# Prompt user for and set PCB params 
 						proc.set_syst_call_params()
@@ -117,7 +125,10 @@ class SysCommand(cmd.Cmd):
 						dev.enqueue(proc)
 
 						# Move process at head of ready queue to CPU
-						self.cpu.set_process(self.ready.dequeue())
+						try: 
+							self.cpu.set_process(self.ready.dequeue())
+						except IndexError:
+							print "No processes in ready queue. CPU empty."
 					else: 
 						print "No process active in CPU"
 
@@ -127,7 +138,7 @@ class SysCommand(cmd.Cmd):
 					try: 
 						proc = dev.dequeue()
 						self.ready.enqueue(proc)
-					except:
+					except IndexError:
 						print "%s queue is empty" %dev
 					else:
 						print "%s completed %s" %(dev, proc)
@@ -144,7 +155,7 @@ class SysCommand(cmd.Cmd):
 			print "ERROR: Invalid Command"
 
 	def help_quit(self):
-		print "syntax: quit", 
+		print "quit", 
 		print "-- quits the program"
 
 	def do_EOF(self, line):
