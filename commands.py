@@ -68,20 +68,21 @@ class SysCommand(cmd.Cmd):
 	def do_s(self, args):
 
 		if not args: 
-			print "##### SNAPSHOT MODE"
-			type_to_snapshot = raw_input("Which Device?: ").lower()
+			print "\n" + "##### SNAPSHOT MODE"
+			type_to_snapshot = raw_input("Device Type: ").lower()
 
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
 
 			# TODO: FIX THIS
-			elif type_to_snapshot in [dtype[0]for dtype in self.valid_device_types]:
-				for d in self.all_devices: 
-					if d.type()[0] == type_to_snapshot: 
-						d.snapshot()
+
+			elif type_to_snapshot in [dtype[0].lower() for dtype in self.valid_device_types]:
+				for dev in self.all_devices: 
+					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
+						dev.snapshot()
 
 			else: #TODO: ASK AGAIN IF NOT KNOWN DEV
-				print ">>> ERROR: Unknown Device Type"
+				print "ERROR: Unknown Device Type"
 
 		else: 
 			print "ERROR: Invalid Command"

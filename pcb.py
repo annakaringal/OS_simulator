@@ -5,7 +5,7 @@ class PCB:
     	self.proc_loc = p_loc
 
     def __repr__(self):
-    	return str(pid)
+    	return str(self.pid)
 
     def __str__(self):
     	return "process #" + str(self.pid)

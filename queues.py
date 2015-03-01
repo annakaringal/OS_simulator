@@ -21,16 +21,15 @@ class DeviceQueue:
     	else: 
     		return head
 
-    def snapshot(self): 
-		""" Prints processes in queue  """
-		if self._q:
+    def length(self):
+        return len(self._q)
 
-			# TODO: FORMAT THIS PRINT OUT
-			print "A SNAPSHOT"
-			
-		else: 
-			print "Queue is empty." 
-
+    def snapshot(self):
+        if self._q: 
+            for i in range(self.length()):
+                print i+1, self._q[i]
+        else:
+            print "queue empty"
 
 class ReadyQueue(DeviceQueue):
 
