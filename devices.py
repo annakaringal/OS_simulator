@@ -9,7 +9,7 @@ class CPU():
     def set_process(self, proc):
         proc.set_proc_loc("CPU")
         self.active = proc
-        print ">>> %s is in the CPU" %self.active
+        print "%s is in the CPU" %self.active
 
     def get_process(self):
         return self.active
@@ -19,12 +19,12 @@ class CPU():
 
     def terminate_process(self):
         if self.active: 
-            print ">>> %s terminated" %self.active
+            print "%s terminated" %self.active
             proc = self.active
             del proc
             self.active = None
         else: #TODO: THROW EXCEP
-            print ">>> ERROR: No process in CPU"
+            print "ERROR: No process in CPU"
 
 class Device(DeviceQueue):
 
@@ -38,19 +38,19 @@ class Device(DeviceQueue):
 
     ## Queue methods
 
-    def enqueue(self,proc):
+    def enqueue(self, proc):
     	""" Add process to end of queue """
     	proc.set_proc_loc(self._dev_name)
-    	DeviceQueue.enqueue(proc)
+    	DeviceQueue.enqueue(self,proc)
     	print proc.status()
 
     ## Methods to print device in human readable form to console
 
     def __repr__(self):
-    	return self._dev_name + " (" + self._dev_type + ")"
+    	return self._dev_name + " (" + self._dev_type.lower() + ")"
 
 	def __str__(self):
-		return self._dev_name + " (" + self._dev_type + ")"
+		return self._dev_type.lower() + " " + self._dev_name
 
     ## Methods to compare/verify device identity
 
@@ -62,3 +62,6 @@ class Device(DeviceQueue):
 
     def get_dev_type(self):
         return self._dev_type
+
+    def get_dev_name(self):
+        return self._dev_name

@@ -8,7 +8,7 @@ class PCB:
     	return str(pid)
 
     def __str__(self):
-    	return "Process #" + str(self.pid)
+    	return "process #" + str(self.pid)
 
     def get_pid(self):
     	return self.pid
@@ -18,7 +18,7 @@ class PCB:
     	self.proc_loc = p_loc
 
     def status(self):
-		return ">>> Process #%s in %s Queue" %(self.pid, self.proc_loc)
+		return "%s in %s queue" %(self, self.proc_loc)
 
     ## Setting/clearing system call params
 

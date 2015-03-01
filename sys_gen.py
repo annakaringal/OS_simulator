@@ -4,6 +4,8 @@ def generate(types_of_dev):
 	""" Generates all system device instances based on user input. 
 	   Returns list of all system devices. """
 
+	print "##### SYSTEM SETUP #####" + "\n"
+
 	# Dictionary of ype of devices and how many devices of each type
 	system_device_types = {}
 
@@ -14,7 +16,7 @@ def generate(types_of_dev):
 		try:
 			num_of_d = int(input("How many %ss? " %d))
 		except:
-			print (">>> ERROR: Invalid entry. Please enter an integer.")
+			print "\n" + "ERROR: Invalid entry. Please enter an integer."
 		else: 
 			system_device_types[d] = num_of_d
 			#break
@@ -31,7 +33,6 @@ def generate(types_of_dev):
 			system_devices.append(Device(name, dev_type))
 
 
-	print """##### SYSTEM GENERATION COMPLETE #####
-	"""
+	print "\n" + "##### SYSTEM GENERATION COMPLETE #####"
 
 	return system_devices
