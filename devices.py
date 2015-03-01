@@ -74,7 +74,7 @@ class CPU():
     def set_process(self, proc):
         proc.set_proc_loc("CPU")
         self.active = proc
-        print "%s is in the CPU" %self.active
+        print "{a!s} is in the CPU".format(a = str(self.active).capitalize())
 
     def get_process(self):
         if self.active:
@@ -84,7 +84,7 @@ class CPU():
 
     def terminate_process(self):
         if self.active: 
-            print "%s terminated" %self.active
+            print "{a!s} terminated".format(a = str(self.active).capitalize())
             proc = self.active
             del proc
             self.active = None

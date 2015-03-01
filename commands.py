@@ -25,7 +25,7 @@ class SysCommand(cmd.Cmd):
 
 	def __init__(self):
 		cmd.Cmd.__init__(self)
-		self.prompt = " COMMAND >> "
+		self.prompt = " >>> "
 
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
@@ -35,7 +35,7 @@ class SysCommand(cmd.Cmd):
 		self.cpu = devices.CPU()
 		self.pid_count = 0
 
-		print "Your system is now running with the following devices: " + "\n"
+		print "Your system is now running with the following devices: "
 		print msg.ruler(48)
 		print "{:<10}{:<38}".format("DEV NAME", "DEV TYPE")
 		print msg.ruler(48)

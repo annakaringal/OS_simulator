@@ -34,7 +34,7 @@ class PCB:
     	return "process #" + str(self.pid)
 
     def status(self):
-        return "%s in %s queue" %(self, self.proc_loc)
+        return "{a!s} is in {q!s} queue".format(a = str(self).capitalize(), q = self.proc_loc.lower())
 
     ## Setting/clearing system call params for pcb
 
