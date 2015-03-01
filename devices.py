@@ -1,10 +1,17 @@
-from collections import deque
+import sys
 from queues import DeviceQueue
+from collections import deque
+from pcb import PCB
 
 class CPU(): 
 
     def __init__(self):
         self.active = None
+
+    def empty(self):
+        return True if not self.active else False
+
+    ## Methods to modify active process in CPU
 
     def set_process(self, proc):
         proc.set_proc_loc("CPU")
@@ -13,9 +20,6 @@ class CPU():
 
     def get_process(self):
         return self.active
-
-    def empty(self):
-        return True if not self.active else False
 
     def terminate_process(self):
         if self.active: 
@@ -52,7 +56,12 @@ class Device(DeviceQueue):
 	def __str__(self):
 		return self._dev_type.lower() + " " + self._dev_name
 
-    ## Methods to compare/verify device identity
+    def snapshot(self):
+        title = " " + self._dev_type.upper() + " " + self._dev_name.upper() + " QUEUE "
+        print '{0:=^78}'.format(title)
+        DeviceQueue.snapshot(self)
+
+    ## Methods to check/return device name/type
 
     def is_device_name(self, query_name):
         return True if self._dev_name == query_name else False

@@ -9,7 +9,7 @@ class SysCommand(cmd.Cmd):
 		cmd.Cmd.__init__(self)
 		self.prompt = "\n >> "
 
-		# SYS GEN PHASE: Set up queues & devices in system
+		## SYS GEN PHASE: Set up queues & devices in system
 		self.valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
 		self.all_devices = sys_gen.generate(self.valid_device_types)
 
@@ -21,8 +21,10 @@ class SysCommand(cmd.Cmd):
 		for dev in self.all_devices: 
 			print dev
 
+		## Now in the RUNNING PHASE
 
-	# NEW PROCESS
+
+	## User Command: New process
 	def do_a(self, args):
 		""" Activates a new process """
 
@@ -43,7 +45,7 @@ class SysCommand(cmd.Cmd):
 		print "A or a", 
 		print "-- activates a new process"
 
-	# TERMINATE PROCESS 
+	## User Command: Terminate Process
 	def do_t(self, args):
 		""" Terminates current process in CPU"""
 
@@ -64,7 +66,7 @@ class SysCommand(cmd.Cmd):
 		print "T or t", 
 		print "-- terminates current process in CPU"
 
-	# SNAPSHOT
+	## User Command: Queue Snapshot
 	def do_s(self, args):
 
 		if not args: 
@@ -73,8 +75,6 @@ class SysCommand(cmd.Cmd):
 
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
-
-			# TODO: FIX THIS
 
 			elif type_to_snapshot in [dtype[0].lower() for dtype in self.valid_device_types]:
 				for dev in self.all_devices: 
@@ -92,6 +92,7 @@ class SysCommand(cmd.Cmd):
 		print "-- outputs the proccesses in a given queue"
 
 
+	## User Command: Device request or unknown (Invalid) command
 	def default(self, args):
 
 		# TODO: IS THERE A WAY TO NOT NEST THIS???
@@ -134,7 +135,7 @@ class SysCommand(cmd.Cmd):
 		if not device_found: 
 			print "ERROR: Invalid Command"
 
-	# EXITING THE PROGRAM 
+	## User Command: Exit
 	def do_quit(self, args):
 		if not args: 
 			print "   Goodbye!"
@@ -150,7 +151,7 @@ class SysCommand(cmd.Cmd):
 		print "Goodbye!"
 		return True
 
-	# Shortcuts & aliases
+	## Command shortcuts & aliases
 	do_A = do_a
 	do_T = do_t
 	do_S = do_s
