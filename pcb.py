@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# 
+# Author:           Anna Cristina Karingal
+# Name:             pcb.py
+# Created:          February 27, 2015
+# Last Updated:     March 1, 2015
+# Description:      Class for the PCB (Process Control Block) that contains
+#                       and sets all information about a process, its state
+#                       and any parameters passed to it by a system call
+
 import sys
 
 class PCB:

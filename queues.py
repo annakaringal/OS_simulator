@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# 
+# Author:           Anna Cristina Karingal
+# Name:             queues.py
+# Created:          February 27, 2015
+# Last Updated:     March 1, 2015
+# Description:      Contains classes for different queues on the system.
+#                   Contains methods allowing user to view what is in the
+#                   queue and enqueue or dequeue a process.
+
 import sys 
 from collections import deque
 from pcb import PCB

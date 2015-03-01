@@ -1,4 +1,19 @@
-import sys, cmd, devices, queues, sys_gen
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# 
+# Author:			Anna Cristina Karingal
+# Name:				commands.py
+# Created: 			February 27, 2015
+# Last Updated: 	March 1, 2015
+# Description:		Generates instances of system deveices and queues.
+#	 				Prompts user for commands in command lineand performs 
+#						actions on system devices, queues and processes 
+#						based on input.
+
+import sys, cmd
+import devices
+import queues
+import sys_gen
 from pcb import PCB
 
 #TODO: how to DRY if not args??? 

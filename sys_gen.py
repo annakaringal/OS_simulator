@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# 
+# Author:			Anna Cristina Karingal
+# Name:				sys_gen.py
+# Created: 			February 27, 2015
+# Last Updated: 	March 1, 2015
+# Description:		Prompts user for input and generates instances of devices
+#					in system based on user input
+
 import sys
 from devices import Device
 
