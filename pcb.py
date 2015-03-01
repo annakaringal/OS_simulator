@@ -11,7 +11,6 @@
 
 import sys
 import msg
-from sys_gen import set_valid_int
 
 class PCB:
 
@@ -41,7 +40,7 @@ class PCB:
 
     def set_syst_call_params(self):
         self.params["file_name"] = raw_input("File Name: ")
-        set_valid_int(self.params, "mem_loc", "Starting Memory Location")
+        msg.set_valid_int(self.params, "mem_loc", "Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
         if (dev_type.lower() == "printer"):
@@ -58,7 +57,7 @@ class PCB:
                     print "Please enter either 'r', 'read', 'w' or 'write'" + "\n"
 
         if self.params["rw"] == "w":
-            set_valid_int(self.params, "file_len", "File Length")
+            msg.set_valid_int(self.params, "file_len", "File Length")
 
     def clear_params(self): # TODO: FIGURE OUT WHEN NEED TO DO THIS
         """ Clears all system call & read/write params """
