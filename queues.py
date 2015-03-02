@@ -33,15 +33,38 @@ class DeviceQueue:
     	else: 
     		return head
 
-    def length(self):
-        return len(self._q)
-
     def snapshot(self):
         if self._q: 
-            print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].param_fields))
-            for i in range(self.length()):
-                print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format(i+1, self._q[i].pid, *self._q[i].params.values())
-            print ""
+
+            start = 0
+            max_height = 20
+            end = max_height
+
+            while start < len(self._q):
+
+                if end > len(self._q): end = len(self._q)
+
+                # Parameter field headers
+                print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].param_fields))
+
+                print msg.ruler()
+                
+                for p in range(start, end):
+                    # Print single process in queue
+                    print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format(p+1, self._q[p].pid, *self._q[p].params.values())
+
+                if end < len(self._q): 
+                    try: 
+                        print ""
+                        raw_input("... press any key to view next 20 items in queue >>> ")
+                    except EOFError: 
+                        print "Goodbye"
+                        raise SystemExit
+
+                start += max_height
+                end += max_height
+
+                print ""
         else:
             print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 
