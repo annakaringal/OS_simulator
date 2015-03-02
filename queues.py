@@ -11,6 +11,7 @@
 
 import sys 
 from collections import deque
+import msg
 from pcb import PCB
 
 class DeviceQueue: 
@@ -37,11 +38,12 @@ class DeviceQueue:
 
     def snapshot(self):
         if self._q: 
-            print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").title(), self._q[0].param_fields))
+            print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].param_fields))
             for i in range(self.length()):
                 print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format(i+1, self._q[i].pid, *self._q[i].params.values())
+            print ""
         else:
-            print '{:^78}'.format("EMPTY: No processes in queue")
+            print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 
 class ReadyQueue(DeviceQueue):
 
@@ -55,6 +57,6 @@ class ReadyQueue(DeviceQueue):
     	print proc.status()
 
     def snapshot(self):
-        print '{0:=^78}'.format(" READY QUEUE ")
+        print msg.snapshot_header("ready")
         DeviceQueue.snapshot(self)
 

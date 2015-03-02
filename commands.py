@@ -36,13 +36,16 @@ class SysCommand(cmd.Cmd):
 		self.pid_count = 0
 
 		print "Your system is now running with the following devices: "
-		print msg.ruler(48)
-		print "{:<10}{:<38}".format("DEV NAME", "DEV TYPE")
-		print msg.ruler(48)
+		print msg.ruler(38)
+		print "{:<10}{:<28}".format("DEV NAME", "DEV TYPE")
+		print msg.ruler(38)
 		for dev in self.all_devices: 
 			print dev
-		print ""
+
 		## Now in the RUNNING PHASE
+		print msg.sys_mode("System running")
+		print "Input a command to start a process in the system."
+		print "-- Type H or h to view a list of valid commands" + "\n"
 
 
 	## User Command: New process
@@ -61,10 +64,6 @@ class SysCommand(cmd.Cmd):
 
 		else: 
 			print msg.invalid_command()
-
-	def help_a(self):
-		print "A or a", 
-		print "-- activates a new process"
 
 	## User Command: Terminate Process
 	def do_t(self, args):
@@ -85,16 +84,15 @@ class SysCommand(cmd.Cmd):
 		else: 
 			print msg.invalid_command()
 
-	def help_t(self):
-		print "T or t", 
-		print "-- terminates current process in CPU"
-
 	## User Command: Queue Snapshot
 	def do_s(self, args):
 
 		if not args:
 			print msg.sys_mode("Snapshot Mode")
-			type_to_snapshot = raw_input("Device Type: ").lower()
+			print "Enter the first letter of a device type to view the queues of all devices of"
+			print "that type." + "\n"
+
+			type_to_snapshot = raw_input("Device Type >>> ").lower()
 
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
@@ -103,18 +101,14 @@ class SysCommand(cmd.Cmd):
 				for dev in self.all_devices: 
 					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 						dev.snapshot()
-				print ""
 
 			else: 
 				print msg.err("Unknown device type")
-				print ""
+
+			print msg.sys_mode("Exiting Snapshot Mode")
 
 		else: 
 			print msg.invalid_command()
-
-	def help_s(self):
-		print "S or s", 
-		print "-- outputs the proccesses in a given queue"
 
 
 	## User Command: Device request or unknown (Invalid) command
@@ -167,17 +161,22 @@ class SysCommand(cmd.Cmd):
 		if not device_found: 
 			print msg.invalid_command()
 
+	## User Command: Display Help
+
+	def do_h(self, args): 
+		if not args: 
+			print msg.sys_mode("Help - Commands")
+			print msg.command_list()
+		else:
+			print msg.invalid_command()
+
 	## User Command: Exit
-	def do_quit(self, args):
+	def do_q(self, args):
 		if not args: 
 			print "Goodbye!"
 			raise SystemExit
 		else: 
 			print msg.invalid_command()
-
-	def help_quit(self):
-		print "quit", 
-		print "-- quits the program"
 
 	def do_EOF(self, line):
 		print "Goodbye!"
@@ -187,6 +186,6 @@ class SysCommand(cmd.Cmd):
 	do_A = do_a
 	do_T = do_t
 	do_S = do_s
-	do_q = do_quit
-	do_Q = do_quit
+	do_Q = do_q
+	do_H = do_h
 

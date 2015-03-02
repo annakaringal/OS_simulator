@@ -17,6 +17,9 @@ def ruler(len=screen_width):
 def sys_mode(mode_name, len=screen_width):
 	return "\n" + "{:#^{l}}".format(" " + mode_name.upper() + " ", l=len) + "\n"
 
+def snapshot_header(q_name, len=screen_width):
+	return "\n" + "{:=^{l}}".format(" " + q_name.upper() + " QUEUE ", l=len) + "\n"
+
 ## Error messages
 
 def err(err_msg):
@@ -41,11 +44,27 @@ def set_valid_int(dict, key, prompt):
 	"""
 	while dict[key] == None: 
 		try: 
-			num = int(input(prompt + ": "))
+			num = int(input(prompt + " >>> "))
 			# Check to see if positive whole number
 			if num <= 0: raise ValueError
 			dict[key] = num
 		except:
-			print msg.err("Please enter a valid positive integer")
+			print err("Please enter a valid positive integer")
+
+## System messages
+def command_list():
+	return """
+    A or a -- Activates a new process
+    T or t -- Terminates active process in the CPU
+    S or s -- Enters snapshot mode.
+              View processes in the queues of devices
+              of a specified type
+    H or h -- Displays list of valid commands.
+    Q or q -- Terminates the program.
+    
+    You can also request a device by its device name: 
+           -- lowercase moves a process from the CPU to the device queue
+           -- uppercase signals the process active in the device is complete
+    """
 
 

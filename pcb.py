@@ -39,7 +39,7 @@ class PCB:
     ## Setting/clearing system call params for pcb
 
     def set_syst_call_params(self):
-        self.params["file_name"] = raw_input("File Name: ")
+        self.params["file_name"] = raw_input("File Name >>> ")
         msg.set_valid_int(self.params, "mem_loc", "Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
@@ -47,14 +47,14 @@ class PCB:
             self.params["rw"] = "w"
         else: 
             while self.params["rw"] == None:
-                rw = raw_input("Read or Write?: ")
+                rw = raw_input("Read or Write? >>> ")
                 if rw.lower() in ["r", "read"]:
                     self.params["rw"] = "r"
                 elif rw.lower() in ["w", "write"]:
                     self.params["rw"] = "w"
                 else: 
                     print msg.err("Invalid read/write parameters")
-                    print "Please enter either 'r', 'read', 'w' or 'write'" + "\n"
+                    print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
             msg.set_valid_int(self.params, "file_len", "File Length")

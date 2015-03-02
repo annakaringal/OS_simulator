@@ -12,6 +12,7 @@
 
 import sys
 from collections import deque
+import msg
 from queues import DeviceQueue
 from pcb import PCB
 
@@ -42,8 +43,7 @@ class Device(DeviceQueue):
         return "{:<10}{:<68}".format(self._dev_name, self._dev_type)
 
     def snapshot(self):
-        title = " " + self._dev_type.upper() + " " + self._dev_name.upper() + " QUEUE "
-        print '{0:=^78}'.format(title)
+        print msg.snapshot_header(self._dev_name)
         DeviceQueue.snapshot(self)
 
     ## Methods to check/return device name/type
