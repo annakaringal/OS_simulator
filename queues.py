@@ -17,7 +17,7 @@ from pcb import PCB
 class DeviceQueue: 
 
     def __init__(self): 
-    	""" Initialize class with empty queue """
+    	""" Initialize class with empty FIFO queue """
     	self._q = deque()
 
     def enqueue(self, proc):
@@ -33,19 +33,29 @@ class DeviceQueue:
     	else: 
     		return head
 
-    def snapshot(self):
-        if self._q: 
+    def length(self): 
+        """ Returns length of queue """
+        return len(self._q)
 
-            start = 0
+    def snapshot(self):
+        """
+        Prints a paginated view of processes & process parameters in 
+        queue.
+
+        """
+        if self._q: 
+            
+            # max number of lines to show
             max_height = 20
+            start = 0
             end = max_height
 
-            while start < len(self._q):
+            while start < self.length():
 
-                if end > len(self._q): end = len(self._q)
+                if end > self.length(): end = self.length()
 
                 # Parameter field headers
-                print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].param_fields))
+                print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].params.keys()))
 
                 print msg.ruler()
                 
@@ -53,10 +63,10 @@ class DeviceQueue:
                     # Print single process in queue
                     print '{:<4}{:^5}{:<25}{:<20}{:^5}{:^15}'.format(p+1, self._q[p].pid, *self._q[p].params.values())
 
-                if end < len(self._q): 
+                if end < self.length(): 
                     try: 
                         print ""
-                        raw_input("... press any key to view next 20 items in queue >>> ")
+                        raw_input("\t" + "... press any key to view next 20 items in queue >>> ")
                     except EOFError: 
                         print "Goodbye"
                         raise SystemExit
@@ -75,11 +85,17 @@ class ReadyQueue(DeviceQueue):
     	DeviceQueue.__init__(self)
 
     def enqueue(self,proc):
+        """
+        Adds process to back of ready queue and updates PCB 
+        status/location 
+
+        """
     	proc.set_proc_loc("Ready")
     	DeviceQueue.enqueue(self,proc)
     	print proc.status()
 
     def snapshot(self):
+        """ Prints processes in ready queue with header """
         print msg.snapshot_header("ready")
         DeviceQueue.snapshot(self)
 

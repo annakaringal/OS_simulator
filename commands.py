@@ -28,8 +28,7 @@ class SysCommand(cmd.Cmd):
 		self.prompt = " >>> "
 
 		## SYS GEN PHASE: Set up queues & devices in system
-		self.valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
-		self.all_devices = sys_gen.generate(self.valid_device_types)
+		self.all_devices = sys_gen.generate()
 
 		self.ready = queues.ReadyQueue()
 		self.cpu = devices.CPU()
@@ -154,16 +153,17 @@ class SysCommand(cmd.Cmd):
 					try: 
 						proc = dev.dequeue()
 						print "%s completed %s" %(dev, proc)
+						proc.clear_params()
 						self.ready.enqueue(proc)
 					except IndexError:
-						print "%s queue is empty" %dev					
+						print "%s queue is empty" %dev				
 
 		if not device_found: 
 			print msg.invalid_command()
 
 	## User Command: Display Help
-
 	def do_h(self, args): 
+		""" Displays the list of valid command line inputs to user """
 		if not args: 
 			print msg.sys_mode("Help - Commands")
 			print msg.command_list()
@@ -172,6 +172,7 @@ class SysCommand(cmd.Cmd):
 
 	## User Command: Exit
 	def do_q(self, args):
+		""" Exits program """
 		if not args: 
 			print "Goodbye!"
 			raise SystemExit
@@ -179,6 +180,7 @@ class SysCommand(cmd.Cmd):
 			print msg.invalid_command()
 
 	def do_EOF(self, line):
+		""" Exits program if end of file char is inputted by user """
 		print "Goodbye!"
 		return True
 

@@ -11,9 +11,14 @@ import sys
 import devices
 import msg
 
-def generate(types_of_dev): 
-	""" Generates all system device instances based on user input. 
-		Returns list of all system devices. """
+valid_device_types = frozenset(["Disk Drive", "Printer", "CD/RW"])
+
+def generate(): 
+	"""
+	Generates all system device instances based on user input. 
+	Returns list of all system devices.
+
+	"""
 
 	print msg.sys_mode("System Setup")
 
@@ -22,7 +27,7 @@ def generate(types_of_dev):
 
 	print "For each device type, please specify the number of devices."
 
-	for d in types_of_dev: 	
+	for d in valid_device_types: 	
 		# Add device type & how many of each type 
 		system_device_types[d] = None
 		msg.set_valid_int(system_device_types, d, d)

@@ -12,13 +12,18 @@
 import sys
 import msg
 
+param_fields = ["file_name","mem_loc","rw","file_len"]
+
 class PCB:
 
     def __init__(self, id_num, p_loc="ready"): 
+        """
+        Initialize with new pid & location, and empty system call params
+
+        """
         self.pid = id_num
         self.proc_loc = p_loc
-        self.param_fields = ["file_name","mem_loc","rw","file_len"]
-        self.params = dict.fromkeys(self.param_fields)
+        self.params = dict.fromkeys(param_fields)
 
     def set_proc_loc(self, p_loc):
         """ Sets location of process, i.e. which queue/device it is in"""
@@ -39,10 +44,19 @@ class PCB:
     ## Setting/clearing system call params for pcb
 
     def set_syst_call_params(self):
+        """
+        Sets system call params for file name & starting memory location
+
+        """
         self.params["file_name"] = raw_input("File Name >>> ")
         msg.set_valid_int(self.params, "mem_loc", "Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
+
+        """
+        Sets system call params for read/write and file length (if write)
+
+        """
         if (dev_type.lower() == "printer"):
             self.params["rw"] = "w"
         else: 
@@ -59,7 +73,7 @@ class PCB:
         if self.params["rw"] == "w":
             msg.set_valid_int(self.params, "file_len", "File Length")
 
-    def clear_params(self): # TODO: FIGURE OUT WHEN NEED TO DO THIS
+    def clear_params(self):
         """ Clears all system call & read/write params """
         for p in self.params:
             self.params[p] = None
