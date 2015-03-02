@@ -22,8 +22,8 @@ class Device(DeviceQueue):
         """
         Initializes new device with device name & device type, and new
         empty queue
-        """ 
 
+        """ 
         DeviceQueue.__init__(self)
         self._dev_name = dname
         self._dev_type = dtype

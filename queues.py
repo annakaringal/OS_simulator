@@ -46,7 +46,7 @@ class DeviceQueue:
         if self._q: 
             
             # max number of lines to show
-            max_height = 20
+            max_height = 18
             start = 0
             end = max_height
 
@@ -66,7 +66,7 @@ class DeviceQueue:
                 if end < self.length(): 
                     try: 
                         print ""
-                        raw_input("\t" + "... press any key to view next 20 items in queue >>> ")
+                        raw_input("\t" + "... press any key to view next items in queue ...")
                     except EOFError: 
                         print "Goodbye"
                         raise SystemExit
@@ -74,7 +74,6 @@ class DeviceQueue:
                 start += max_height
                 end += max_height
 
-                print ""
         else:
             print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 

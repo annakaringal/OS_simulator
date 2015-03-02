@@ -13,10 +13,10 @@
 import sys
 import cmd
 
+import sys_gen
+import msg 
 import devices
 import queues
-import sys_gen
-import msg
 from pcb import PCB
 
 #TODO: how to DRY if not args??? 
@@ -93,10 +93,13 @@ class SysCommand(cmd.Cmd):
 
 			type_to_snapshot = raw_input("Device Type >>> ").lower()
 
+			# Show processes in ready queue
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
 
-			elif type_to_snapshot in [dtype[0].lower() for dtype in self.valid_device_types]:
+			# Show processes in device 
+			elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
+
 				for dev in self.all_devices: 
 					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 						dev.snapshot()
