@@ -59,8 +59,7 @@ def set_valid_int(dict, key, prompt):
 ## System messages
 
 def command_list():
-	return """
-    A or a -- Activates a new process
+	return """    A or a -- Activates a new process
     T or t -- Terminates active process in the CPU
     S or s -- Enters snapshot mode.
               View processes in the queues of devices
