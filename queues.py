@@ -55,14 +55,14 @@ class DeviceQueue:
                 if end > self.length(): end = self.length()
 
                 # Parameter field headers
-                print '{:<4}{:<5}{:<25}{:<20}{:^5}{:^15}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].params.keys()))
+                print '{:<5}{:<5}{:<20}{:<20}{:^5}{:^20}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].params.keys()))
 
                 print msg.ruler()
                 
                 for p in range(start, end):
                     # Print single process in queue
 
-                    print '{:<4}{:<5}{:<25}{:<20}{:^5}{:^15}'.format(p+1, self._q[p].pid, *[str(val)[:20] for val in self._q[p].params.values()])
+                    print '{:<5}{:<5}{:<20}{:<20}{:^5}{:^20}'.format(p+1, self._q[p].pid, *[str(val)[:20] for val in self._q[p].params.values()])
 
                 if end < self.length(): 
                     try: 
