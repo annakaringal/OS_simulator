@@ -23,8 +23,8 @@ from pcb import PCB
 
 class SysCommand(cmd.Cmd):
 
-	def __init__(self):
-		cmd.Cmd.__init__(self)
+	def __init__(self, completekey = None):
+		cmd.Cmd.__init__(self, completekey = None)
 		self.prompt = " >>> "
 
 		## SYS GEN PHASE: Set up queues & devices in system
@@ -177,6 +177,7 @@ class SysCommand(cmd.Cmd):
 	## User Command: unknown input
 	def emptyline(self):
 		print msg.invalid_command()
+
 
 	## User Command: Exit
 	def do_q(self, args):
