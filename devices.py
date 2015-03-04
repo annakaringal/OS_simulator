@@ -44,7 +44,7 @@ class Device(DeviceQueue):
 
     def __str__(self):
         """ Returns device name and type as a string """ 
-        return "{:<10}{:<68}".format(self._dev_name, self._dev_type)
+        return self._dev_type + " " + self._dev_name
 
     def snapshot(self):
         """ Prints all processes in queue to console """

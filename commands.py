@@ -39,7 +39,7 @@ class SysCommand(cmd.Cmd):
 		print "{:<10}{:<28}".format("DEV NAME", "DEV TYPE")
 		print msg.ruler(38)
 		for dev in self.all_devices: 
-			print dev
+			print "{:<10}{:<28}".format(dev.get_dev_name(), dev.get_dev_type())
 
 		## Now in the RUNNING PHASE
 		print msg.sys_mode("System running")
@@ -159,7 +159,7 @@ class SysCommand(cmd.Cmd):
 						proc.clear_params()
 						self.ready.enqueue(proc)
 					except IndexError:
-						print "%s queue is empty" %dev				
+						print "{!s} queue is empty".format(dev)				
 
 		if not device_found: 
 			print msg.invalid_command()
