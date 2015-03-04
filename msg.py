@@ -35,7 +35,7 @@ def nothing_in_cpu():
 	return "ERROR: No active process in CPU"
 
 def nothing_in_ready():
-	return "ERROR: Ready queue is empty"
+	return "Ready queue is empty"
 
 ## Validating Input
 
