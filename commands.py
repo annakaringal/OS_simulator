@@ -93,9 +93,10 @@ class SysCommand(cmd.Cmd):
 
 			type_to_snapshot = raw_input("Device Type >>> ").lower()
 
-			# Show processes in ready queue
+			# Show active process in CPU & processes in ready queue 
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
+				print "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
 
 			# Show processes in device 
 			elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
