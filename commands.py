@@ -174,6 +174,10 @@ class SysCommand(cmd.Cmd):
 		else:
 			print msg.invalid_command()
 
+	## User Command: unknown input
+	def emptyline(self):
+		print msg.invalid_command()
+
 	## User Command: Exit
 	def do_q(self, args):
 		""" Exits program """
