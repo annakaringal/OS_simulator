@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     March 1, 2015
+# Last Updated:     March 5, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 

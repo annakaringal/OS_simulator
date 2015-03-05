@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	March 1, 2015
+# Last Updated: 	March 5, 2015
 # Description:		Generates instances of system deveices and queues.
 #	 				Prompts user for commands in command lineand performs 
 #						actions on system devices, queues and processes 
@@ -18,8 +18,6 @@ import msg
 import devices
 import queues
 from pcb import PCB
-
-#TODO: how to DRY if not args??? 
 
 class SysCommand(cmd.Cmd):
 
@@ -96,7 +94,10 @@ class SysCommand(cmd.Cmd):
 			# Show active process in CPU & processes in ready queue 
 			if type_to_snapshot == "r": 
 				self.ready.snapshot()
-				print "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
+				if not self.cpu.empty(): 
+					print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
+				else: 
+					print "\n" + "No active process in the CPU"
 
 			# Show processes in device 
 			elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:

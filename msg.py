@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             msg.py
 # Created:          March 1, 2015
-# Last Updated:     March 1, 2015
+# Last Updated:     March 4, 2015
 # Description:      Contains methods to display formatted output to terminal
 
 screen_width = 78

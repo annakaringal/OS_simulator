@@ -68,6 +68,7 @@ class DeviceQueue:
                     try: 
                         print ""
                         raw_input("\t" + "... press any key to view next items in queue ...")
+                        print ""
                     except EOFError: 
                         print "Goodbye"
                         raise SystemExit
