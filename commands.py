@@ -71,7 +71,7 @@ class SysCommand(cmd.Cmd):
 			# Remove process from head of ready queue, moves to CPU
 			self.cpu.set_process(self.ready.dequeue())
 		except IndexError:
-			print msg.nothing_in_ready(), ". No active processes in CPU"
+			print msg.nothing_in_ready()
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
@@ -149,7 +149,7 @@ class SysCommand(cmd.Cmd):
 						proc.clear_params()
 						self.ready.enqueue(proc)
 					except IndexError:
-						print "{!s} queue is empty".format(dev)				
+						print msg.err("{!s} queue is empty".format(dev))		
 
 		if not device_found: 
 			print msg.invalid_command()
