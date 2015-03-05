@@ -181,7 +181,7 @@ class SysCommand(cmd.Cmd):
 		print "Goodbye!"
 		raise SystemExit
 
-	def do_EOF(self, ):
+	def do_EOF(self, args):
 		""" Exits program if end of file char is inputted by user """
 		print "Goodbye!"
 		return True

@@ -6,6 +6,7 @@
 # Created:          March 1, 2015
 # Last Updated:     March 4, 2015
 # Description:      Contains methods to display formatted output to terminal
+#					and check input for validity
 
 screen_width = 78
 
@@ -49,10 +50,12 @@ def set_valid_int(dict, key, prompt):
 	"""
 	while dict[key] == None: 
 		try: 
-			num = int(input(prompt + " >>> "))
+			num = input(prompt + " >>> ")
 			# Check to see if positive whole number
-			if num <= 0: raise ValueError
-			dict[key] = num
+			if isinstance(num, (int, long)):
+				if num <= 0: raise ValueError
+				dict[key] = num
+			else: raise ValueError
 		except:
 			print err("Please enter a valid positive integer")
 
