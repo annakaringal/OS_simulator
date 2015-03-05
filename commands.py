@@ -71,7 +71,7 @@ class SysCommand(cmd.Cmd):
 			# Remove process from head of ready queue, moves to CPU
 			self.cpu.set_process(self.ready.dequeue())
 		except IndexError:
-			print msg.nothing_in_ready()
+			print msg.nothing_in_ready(), ". No active processes in CPU"
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
