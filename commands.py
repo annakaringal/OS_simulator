@@ -157,8 +157,8 @@ class SysCommand(cmd.Cmd):
 	## User Command: Display Help
 	def do_h(self, args): 
 		""" Displays the list of valid command line inputs to user """
-			print msg.sys_mode("Help - Commands")
-			print msg.command_list()
+		print msg.sys_mode("Help - Commands")
+		print msg.command_list()
 
 	## User Command: Unknown input (special cases)
 	def emptyline(self):
@@ -178,8 +178,8 @@ class SysCommand(cmd.Cmd):
 	## User Command: Exit
 	def do_q(self, args):
 		""" Exits program """
-			print "Goodbye!"
-			raise SystemExit
+		print "Goodbye!"
+		raise SystemExit
 
 	def do_EOF(self, ):
 		""" Exits program if end of file char is inputted by user """
