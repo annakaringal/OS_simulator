@@ -49,70 +49,58 @@ class SysCommand(cmd.Cmd):
 	def do_a(self, args):
 		""" Activates a new process """
 
-		if not args: 
-			self.pid_count += 1
-			new_proc = PCB(self.pid_count)
+		self.pid_count += 1
+		new_proc = PCB(self.pid_count)
 
-			# Send process to CPU or ready queue based on what's in CPU
-			if self.cpu.empty():
-				self.cpu.set_process(new_proc)
-			else:
-				self.ready.enqueue(new_proc)
-
-		else: 
-			print msg.invalid_command()
+		# Send process to CPU or ready queue based on what's in CPU
+		if self.cpu.empty():
+			self.cpu.set_process(new_proc)
+		else:
+			self.ready.enqueue(new_proc)
 
 	## User Command: Terminate Process
 	def do_t(self, args):
 		""" Terminates current process in CPU"""
 
-		if not args: 
+		try:
+			self.cpu.terminate_process()
+		except IndexError: 
+			print msg.nothing_in_cpu()
 
-			try:
-				self.cpu.terminate_process()
-			except IndexError: 
-				print msg.nothing_in_cpu()
-
-			try: 
-				# Remove process from head of ready queue, moves to CPU
-				self.cpu.set_process(self.ready.dequeue())
-			except IndexError:
-				print msg.nothing_in_ready()
-		else: 
-			print msg.invalid_command()
+		try: 
+			# Remove process from head of ready queue, moves to CPU
+			self.cpu.set_process(self.ready.dequeue())
+		except IndexError:
+			print msg.nothing_in_ready()
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
 
-		if not args:
-			print msg.sys_mode("Snapshot Mode")
-			print "Enter the first letter of a device type to view the queues of all devices of"
-			print "that type." + "\n"
+		# Request device type from user
+		print msg.sys_mode("Snapshot Mode")
+		print "Enter the first letter of a device type to view the queues of all devices of"
+		print "that type." + "\n"
+		type_to_snapshot = raw_input("Device Type >>> ").lower()
 
-			type_to_snapshot = raw_input("Device Type >>> ").lower()
-
-			# Show active process in CPU & processes in ready queue 
-			if type_to_snapshot == "r": 
-				self.ready.snapshot()
-				if not self.cpu.empty(): 
-					print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
-				else: 
-					print "\n" + "No active process in the CPU"
-
-			# Show processes in device 
-			elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
-
-				for dev in self.all_devices: 
-					if type_to_snapshot == dev.get_dev_type()[0].lower(): 
-						dev.snapshot()
-
+		# Show active process in CPU & processes in ready queue 
+		if type_to_snapshot == "r": 
+			self.ready.snapshot()
+			if not self.cpu.empty(): 
+				print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
 			else: 
-				print msg.err("Unknown device type")
+				print "\n" + "No active process in the CPU"
 
-			print msg.sys_mode("Exiting Snapshot Mode")
+		# Show processes in device 
+		elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
+
+			for dev in self.all_devices: 
+				if type_to_snapshot == dev.get_dev_type()[0].lower(): 
+					dev.snapshot()
 
 		else: 
-			print msg.invalid_command()
+			print msg.err("Unknown device type")
+
+		print msg.sys_mode("Exiting Snapshot Mode")
 
 
 	## User Command: Device request or unknown (Invalid) command
@@ -169,30 +157,35 @@ class SysCommand(cmd.Cmd):
 	## User Command: Display Help
 	def do_h(self, args): 
 		""" Displays the list of valid command line inputs to user """
-		if not args: 
 			print msg.sys_mode("Help - Commands")
 			print msg.command_list()
-		else:
-			print msg.invalid_command()
 
-	## User Command: unknown input
+	## User Command: Unknown input (special cases)
 	def emptyline(self):
+		""" If empty line is entered, returns invalid input error """
 		print msg.invalid_command()
+
+	def precmd(self, line):
+		""" If > 1 argument entered, returns invalid input error """
+		all_args = line.split(" ")
+		if len(all_args) > 1: 
+			return "INVALID"
+		else: 
+			command_only = str(all_args[0])
+			return command_only
 
 
 	## User Command: Exit
 	def do_q(self, args):
 		""" Exits program """
-		if not args: 
 			print "Goodbye!"
 			raise SystemExit
-		else: 
-			print msg.invalid_command()
 
-	def do_EOF(self, line):
+	def do_EOF(self, ):
 		""" Exits program if end of file char is inputted by user """
 		print "Goodbye!"
 		return True
+		
 
 	## Command shortcuts & aliases
 	do_A = do_a
