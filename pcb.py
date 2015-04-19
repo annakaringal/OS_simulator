@@ -94,13 +94,13 @@ class PCB:
         time, last recorded burst time, and history parameter alpha
 
         """
-        self.last_est_burst = nself.ext_est_burst
+        self.last_est_burst = self.next_est_burst
         self.next_est_burst = (self.burst_history[-1]* (1-self.a)) + (self.a * self.last_est_burst)
 
     def record_burst_time(self, burst): 
         self.burst_history.append(burst)
         self.total_cpu_time += burst
-        self.calc_next_est_burst(self)
+        self.calc_next_est_burst()
 
     def avg_burst_time(self):
         return self.total_cpu_time / len(self.burst_history) if self.burst_history else 0
@@ -138,12 +138,11 @@ class PCB:
             msg.set_valid_int(self.params, "file_len", "File Length")
 
     def set_cylinder_params(self, max_num_cylinders):
-        if (dev_type.lower() == "disk drive"):
-            cyl = raw_input("Cylinder >>> ")
-            if cyl > max_num_cylinders: 
-                raise IndexError
-            else: 
-                self.params["cylinder"] = cyl
+        cyl = raw_input("Cylinder >>> ")
+        if cyl > max_num_cylinders: 
+            raise IndexError
+        else: 
+            self.params["cylinder"] = cyl
 
     def clear_params(self):
         """ Clears all system call & read/write params """
