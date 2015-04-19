@@ -4,11 +4,11 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	March 5, 2015
+# Last Updated: 	April 19, 2015
 # Description:		Generates instances of system deveices and queues.
 #	 				Prompts user for commands in command lineand performs 
-#						actions on system devices, queues and processes 
-#						based on input.
+#					actions on system devices, queues and processes 
+#					based on input.
 
 import sys
 import cmd
@@ -28,8 +28,9 @@ class SysCommand(cmd.Cmd):
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.all_devices = sys_gen.generate()
 
-		self.ready = queues.ReadyQueue()
-		self.cpu = devices.CPU()
+		self.cpu = devices.CPU() # TO DO: CHECK INPUTS
+		self.alpha = raw_input("History Parameter >> ");
+		self.tau = raw_input ("Initial Burst Estimate >> ")
 		self.pid_count = 0
 
 		print "Your system is now running with the following devices: "
@@ -50,7 +51,7 @@ class SysCommand(cmd.Cmd):
 		""" Activates a new process """
 
 		self.pid_count += 1
-		new_proc = PCB(self.pid_count)
+		new_proc = PCB(self.pid_count, alpha, tau)
 
 		# Send process to CPU or ready queue based on what's in CPU
 		if self.cpu.empty():
