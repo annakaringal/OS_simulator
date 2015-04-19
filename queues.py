@@ -4,38 +4,39 @@
 # Author:           Anna Cristina Karingal
 # Name:             queues.py
 # Created:          February 27, 2015
-# Last Updated:     March 1, 2015
-# Description:      Contains classes for different queues on the system.
+# Last Updated:     April 9, 2015
+# Description:      Classes for different types of queues in the system.
 #                   Contains methods allowing user to view what is in the
 #                   queue and enqueue or dequeue a process.
 
 import sys 
 from collections import deque
+import heapq
 import msg
 from pcb import PCB
 
-class DeviceQueue: 
+class FIFOQueue: 
 
     def __init__(self): 
-    	""" Initialize class with empty FIFO queue """
+    	""" Initialize class with empty queue """
     	self._q = deque()
-
-    def enqueue(self, proc):
-    	""" Add process to end of queue """
-    	self._q.append(proc)
-
-    def dequeue(self):
-    	""" Removes & returns process at head of queue """
-    	try: 
-    		head = self._q.popleft()
-    	except IndexError: 
-    		raise
-    	else: 
-    		return head
 
     def length(self): 
         """ Returns length of queue """
         return len(self._q)
+
+    def enqueue(self, proc):
+        """ Add process to end of queue """
+        self._q.append(proc)
+
+    def dequeue(self):
+        """ Removes & returns process at head of queue """
+        try: 
+            head = self._q.popleft()
+        except IndexError: 
+            raise
+        else: 
+            return head
 
     def snapshot(self):
         """
@@ -79,24 +80,32 @@ class DeviceQueue:
         else:
             print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 
-class ReadyQueue(DeviceQueue):
 
-    def __init__(self): 
-    	""" Initialize class with empty queue """
-    	DeviceQueue.__init__(self)
+class PriorityQueue:
 
-    def enqueue(self,proc):
+    def __init__(self):
         """
-        Adds process to back of ready queue and updates PCB 
-        status/location 
+        Initialize with empty min heap
 
         """
-    	proc.set_proc_loc("Ready")
-    	DeviceQueue.enqueue(self,proc)
-    	print proc.status()
+        self._q = [] 
 
-    def snapshot(self):
-        """ Prints processes in ready queue with header """
-        print msg.snapshot_header("ready")
-        DeviceQueue.snapshot(self)
+    def length():
+        return len(_q)
+
+    def enqueue(self, proc):
+        """
+        Add to heap maintaining heap order property
+        """
+        heappush(_q,proc)
+
+    def dequeue(self, proc):
+        """
+        Remove and return task with lowest priority
+        """
+        return heappop(_q)
+
+    def snapshot():
+        pass
+
 
