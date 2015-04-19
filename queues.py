@@ -15,28 +15,18 @@ import heapq
 import msg
 from pcb import PCB
 
-class FIFOQueue: 
+class Queue:
 
-    def __init__(self): 
-    	""" Initialize class with empty queue """
-    	self._q = deque()
+    def __init__(self):
+        self._q = None
 
+
+    def empty(self):
+        return True if not self._q else False
+    
     def length(self): 
         """ Returns length of queue """
         return len(self._q)
-
-    def enqueue(self, proc):
-        """ Add process to end of queue """
-        self._q.append(proc)
-
-    def dequeue(self):
-        """ Removes & returns process at head of queue """
-        try: 
-            head = self._q.popleft()
-        except IndexError: 
-            raise
-        else: 
-            return head
 
     def snapshot(self):
         """
@@ -53,7 +43,8 @@ class FIFOQueue:
 
             while start < self.length():
 
-                if end > self.length(): end = self.length()
+                if end > self.length():
+                    end = self.length()
 
                 # Parameter field headers
                 print '{:<5}{:<5}{:<20}{:<20}{:^5}{:^20}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].params.keys()))
@@ -78,10 +69,30 @@ class FIFOQueue:
                 end += max_height
 
         else:
+        
             print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 
+class FIFOQueue(Queue): 
 
-class PriorityQueue:
+    def __init__(self): 
+    	""" Initialize class with empty queue """
+    	self._q = deque()
+
+    def enqueue(self, proc):
+        """ Add process to end of queue """
+        self._q.append(proc)
+
+    def dequeue(self):
+        """ Removes & returns process at head of queue """
+        try: 
+            head = self._q.popleft()
+        except IndexError: 
+            raise
+        else: 
+            return head
+
+
+class PriorityQueue(Queue):
 
     def __init__(self, f = False):
         """
@@ -91,14 +102,8 @@ class PriorityQueue:
         self._q = []
         self._frozen = f
 
-    def length(self):
-        return len(self._q)
-
     def is_frozen(self):
         return self._frozen
-
-    def empty(self):
-        return True if not self._q else False
 
     def freeze(self):
         self._frozen = True
@@ -120,8 +125,3 @@ class PriorityQueue:
         Remove and return task with lowest priority
         """
         return heapq.heappop(self._q)
-
-    def snapshot():
-        pass
-
-
