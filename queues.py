@@ -89,28 +89,28 @@ class PriorityQueue:
 
         """
         self._q = []
-        self.frozen = f
+        self._frozen = f
 
     def length(self):
         return len(self._q)
 
+    def is_frozen(self):
+        return self._frozen
+
     def empty(self):
         return True if not self._q else False
 
-    def frozen(self): 
-        return self.frozen
-
     def freeze(self):
-        self.frozen = True
+        self._frozen = True
 
     def unfreeze(self):
-        self.frozen = False
+        self._frozen = False
 
     def enqueue(self, proc):
         """
         Add to heap maintaining heap order property
         """
-        if not self.frozen:
+        if not self._frozen:
             heapq.heappush(self._q,proc)
         else: # TO DO : FIND BETTER ERROR
             raise IndexError

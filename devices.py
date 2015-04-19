@@ -105,7 +105,7 @@ class DiskDrive(PriorityQueue):
         If frozen queue is empty, unfreeze and freeze other queue
 
         """
-        if self._q1.frozen(): #Q1 is frozen, add to Q2
+        if self._q1.is_frozen(): #Q1 is frozen, add to Q2
             self._q2.enqueue(proc)
             if self._q1.empty():
                 self._q2.freeze()
@@ -125,7 +125,7 @@ class DiskDrive(PriorityQueue):
         If dequeuing empties queue, freeze queue and unfreeze other queue
 
         """ 
-        if self._q1.frozen():
+        if self._q1.is_frozen():
             proc = self._q1.dequeue()
             if self._q1.empty():
                 self._q2.freeze()
@@ -140,7 +140,7 @@ class DiskDrive(PriorityQueue):
         return proc
 
     def snapshot(self):
-        if self._q1.frozen():
+        if self._q1.is_frozen():
             self._q1.snapshot()
             self._q2.snapshot()
         else:
@@ -213,7 +213,7 @@ class CPU(PriorityQueue):
             self.ready_to_CPU()
 
             # Update burst times
-            burst = raw_input("Time Spent in CPU >>> ")
+            burst = int(raw_input("Time Spent in CPU >>> "))
             proc.record_burst_time(burst)
             return proc
 
