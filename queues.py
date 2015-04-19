@@ -83,15 +83,25 @@ class FIFOQueue:
 
 class PriorityQueue:
 
-    def __init__(self):
+    def __init__(self, f = False):
         """
         Initialize with empty min heap
 
         """
-        self._q = [] 
+        self._q = []
+        frozen = f
 
-    def length():
+    def length(self):
         return len(_q)
+
+    def frozen(self): 
+        return frozen
+
+    def freeze(self):
+        frozen = True
+
+    def unfreeze(self):
+        frozen = False
 
     def enqueue(self, proc):
         """
@@ -99,7 +109,7 @@ class PriorityQueue:
         """
         heappush(_q,proc)
 
-    def dequeue(self, proc):
+    def dequeue(self):
         """
         Remove and return task with lowest priority
         """
