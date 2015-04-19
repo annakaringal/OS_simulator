@@ -166,7 +166,7 @@ class CPU(PriorityQueue):
         """
         Adds process to back of ready queue and updates PCB status/location 
         """
-        if not (self.active): # No processes in CPU
+        if not self.active: # No processes in CPU
             proc.set_proc_loc("CPU")
             self.active = proc
         else: # Something in CPU, put in ready queue
@@ -208,7 +208,7 @@ class CPU(PriorityQueue):
         """
         if self.active: 
             # Terminate active process and replace from ready queue
-            print "{a!s} terminated".format(a = str(self.active).capitalize())
+            print "{a!s} removed from CPU".format(a = str(self.active).capitalize())
             proc = self.active
             self.ready_to_CPU()
 
@@ -224,6 +224,10 @@ class CPU(PriorityQueue):
         """ Prints processes in ready queue with header """
         print msg.snapshot_header("ready")
         PriorityQueue.snapshot(self)
+        if self.active: 
+            print "\n" + "Active process in CPU: {a!s}".format(a=str(self.active))
+        else:
+            print "\n" + "No active process in the CPU"
 
     def get_active_process(self):
         """ Returns copy of active process in CPU """ 
