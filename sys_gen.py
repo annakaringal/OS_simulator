@@ -3,7 +3,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				sys_gen.py
 # Created: 			February 27, 2015
-# Last Updated: 	March 1, 2015
+# Last Updated: 	April 19, 2015
 # Description:		Prompts user for input and generates instances of devices
 #					in system based on user input
 
@@ -41,7 +41,14 @@ def generate():
 		# Create new device, add to list of system_devices
 		for i in range(num_of_dev):
 			name = name_prefix + str(i+1)
-			system_devices.append(devices.Device(name, dev_type))
+
+			if dev_type == "Disk Drive"
+				# TO DO: CHECK IF VALID INT
+				cyl = input("Number of cylinders for " + name)
+				system_devices.append(devices.DiskDrive(name,cyl))
+			else
+				system_devices.append(devices.Device(name, dev_type))
+
 
 	print msg.sys_mode("System Generation Complete")
 
