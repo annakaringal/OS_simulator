@@ -44,7 +44,7 @@ def generate():
 
 			if (dev_type == "Disk Drive"):
 				# TO DO: CHECK IF VALID INT
-				cyl = input("Number of cylinders for " + name)
+				cyl = input("Number of cylinders for " + name + " >>> ")
 				system_devices.append(devices.DiskDrive(name,cyl))
 			else:
 				system_devices.append(devices.Device(name, dev_type))
