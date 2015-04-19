@@ -53,8 +53,7 @@ class Queue:
                 
                 for p in range(start, end):
                     # Print single process in queue
-
-                    print '{:<5}{:<5}{:<20}{:<20}{:^5}{:^20}'.format(p+1, self._q[p].pid, *[str(val)[:20] for val in self._q[p].params.values()])
+                    self._q[p].snapshot()
 
                 if end < self.length(): 
                     try: 
@@ -68,8 +67,10 @@ class Queue:
                 start += max_height
                 end += max_height
 
+
+
         else:
-        
+
             print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
 
 class FIFOQueue(Queue): 

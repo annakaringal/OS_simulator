@@ -50,6 +50,18 @@ class PCB:
     def status(self):
         return "{a!s} is in {q!s} queue".format(a = str(self).capitalize(), q = self.proc_loc.lower())
 
+    def snapshot(self):
+        
+        print "{:<4}".format(str(self.pid)),
+
+        for key, val in self.params.iteritems():
+            if self.proc_loc.lower() != "disk drive" and key == "cylinder":
+                continue
+            print"{:<{w}}".format(str(val)[:10], w=len(key)+1),
+
+        print "{:<4}".format(str(self.avg_burst_time())),
+        print "{:<4}".format(str(self.total_cpu_time)),
+        print "\n",
 
     ## Methods to compare PCBs
 
