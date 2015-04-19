@@ -81,10 +81,6 @@ class SysCommand(cmd.Cmd):
 		# Show active process in CPU & processes in ready queue 
 		if type_to_snapshot == "r": 
 			self.cpu.snapshot()
-			if not self.cpu.empty(): 
-				print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_active_process()).capitalize())
-			else: 
-				print "\n" + "No active process in the CPU"
 
 		# Show processes in device 
 		elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
@@ -126,7 +122,7 @@ class SysCommand(cmd.Cmd):
 					if (dev.get_dev_type().lower() == "disk drive"):
 						try:
 							proc.set_cylinder_params(dev.get_num_cylinders())
-						except IndexError: 
+						except IndexError: # TO DO: PROMPT UNTIL VALID NUMBER
 							print "Invalid cylinder number"
 
 					print msg.sys_mode("System call parameters set")
