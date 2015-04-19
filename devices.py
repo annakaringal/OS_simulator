@@ -12,7 +12,7 @@
 import sys
 from collections import deque
 import msg
-from queues import DeviceQueue
+from queues import FIFOQueue, PriorityQueue
 from pcb import PCB
 
 class Device(FIFOQueue):
@@ -71,13 +71,14 @@ class DiskDrive(PriorityQueue):
     """ 
 
     def __init__(self, dname, cyl):
-        self._dev_type = "Disk Drive"
-        self._dname = dname
-        self._dname = dname
 
-        # Two priority queues to implement FSCAN
-        PriorityQueue.__init__(self) 
-        self._q2 = PriorityQueue() 
+        self._dev_type = "Disk Drive"
+        self._dev_name = dname
+        self._cylinders = cyl
+
+        # Two priority queues to implement FSCAN. Q2 is frozen
+        self._q1 = PriorityQueue()
+        self._q2 = PriorityQueue(True)
 
     ## Methods to check/return device properties
 
@@ -90,19 +91,69 @@ class DiskDrive(PriorityQueue):
     def get_dev_name(self):
         return self._dev_name
 
+    def is_device_type(self, query_type):
+        return True if self._dev_type == query_type else False
+
+    def get_dev_type(self):
+        return self._dev_type
+
     ## Scheduling methods
 
     def enqueue(self, proc):
-        pass
+        """
+        Enqueue processes to unfrozen queue.
+        If frozen queue is empty, unfreeze and freeze other queue
+
+        """
+        if self._q1.frozen(): #Q1 is frozen, add to Q2
+            self._q2.enqueue(proc)
+            if self._q1.empty():
+                self._q2.freeze()
+                self._q1.unfreeze()
+
+        else: #Q2 frozen, add to Q1
+            self._q1.enqueue(proc)
+            if self._q2.empty():
+                self._q1.freeze()
+                self._q2.unfreeze()
 
     def dequeue(self, proc):
-        pass
+        """
+        Remove and return process at head of frozen queue
 
+        Only dequeue processes from whichever queue is frozen
+        If dequeuing empties queue, freeze queue and unfreeze other queue
+
+        """ 
+        if self._q1.frozen():
+            proc = self._q1.dequeue()
+            if self._q1.empty():
+                self._q2.freeze()
+                self._q1.unfreeze()
+
+        else: 
+            proc = self._q2.dequeue()
+            if self._q2.empty():
+                self._q1.freeze()
+                self._q2.unfreeze()
+
+        return proc
+
+    def snapshot(self):
+        if self._q1.frozen():
+            self._q1.snapshot()
+            self._q2.snapshot()
+        else:
+            self._q2.snapshot()
+            self._q2.snapshot()
 
 class CPU(PriorityQueue): 
 
     def __init__(self):
-        """ Initializes CPU with no active processes and empty Priority Queue""" 
+        """
+        Initializes CPU with no active processes and empty non-frozen
+        Priority Queue
+        """ 
         self.active = None
         PriorityQueue.__init__(self)
 
@@ -113,9 +164,7 @@ class CPU(PriorityQueue):
 
     def enqueue(self,proc):
         """
-        Adds process to back of ready queue and updates PCB 
-        status/location 
-
+        Adds process to back of ready queue and updates PCB status/location 
         """
         if not (self.active): # No processes in CPU
             proc.set_proc_loc("CPU")
@@ -130,16 +179,15 @@ class CPU(PriorityQueue):
         Moves process at head of ready queue to CPU
         """
         if PriorityQueue: 
-                self.active = PriorityQueue.dequeue()
-            else: # Nothing in ready queue
-                self.active = None
-                print msg.nothing_in_ready()
+                self.active = PriorityQueue.dequeue(self)
+        else: # Nothing in ready queue
+            self.active = None
+            print msg.nothing_in_ready()
 
     def terminate(self):
         """
         Terminates active process in CPU, deallocates memory used by process.
         Moves next process in Ready Queue to CPU
-
         """
         if self.active: 
             # Terminate active process and replace from ready queue
@@ -147,7 +195,7 @@ class CPU(PriorityQueue):
             proc = self.active
             del proc
 
-            ready_to_CPU(self)
+            self.ready_to_CPU()
 
         else: # Nothing to dequeue
             raise IndexError 
@@ -162,7 +210,11 @@ class CPU(PriorityQueue):
             # Terminate active process and replace from ready queue
             print "{a!s} terminated".format(a = str(self.active).capitalize())
             proc = self.active
-            ready_to_CPU(self)
+            self.ready_to_CPU()
+
+            # Update burst times
+            burst = raw_input("Time Spent in CPU >>> ")
+            proc.record_burst_time(burst)
             return proc
 
         else: # Nothing to dequeue
