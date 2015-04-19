@@ -89,31 +89,37 @@ class PriorityQueue:
 
         """
         self._q = []
-        frozen = f
+        self.frozen = f
 
     def length(self):
-        return len(_q)
+        return len(self._q)
+
+    def empty(self):
+        return True if not self._q else False
 
     def frozen(self): 
-        return frozen
+        return self.frozen
 
     def freeze(self):
-        frozen = True
+        self.frozen = True
 
     def unfreeze(self):
-        frozen = False
+        self.frozen = False
 
     def enqueue(self, proc):
         """
         Add to heap maintaining heap order property
         """
-        heappush(_q,proc)
+        if not self.frozen:
+            heapq.heappush(self._q,proc)
+        else: # TO DO : FIND BETTER ERROR
+            raise IndexError
 
     def dequeue(self):
         """
         Remove and return task with lowest priority
         """
-        return heappop(_q)
+        return heapq.heappop(self._q)
 
     def snapshot():
         pass
