@@ -9,7 +9,6 @@
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
 
-
 import sys
 from collections import deque
 import msg
@@ -75,8 +74,12 @@ class DiskDrive(PriorityQueue):
         self._dev_type = "Disk Drive"
         self._dname = dname
         self._dname = dname
-        PriorityQueue.__init__(self) # A first priority queue
-        self._q2 = PriorityQueue() # A second priority queue
+
+        # Two priority queues to implement FSCAN
+        PriorityQueue.__init__(self) 
+        self._q2 = PriorityQueue() 
+
+    ## Methods to check/return device properties
 
     def get_num_cylinders(self):
         return self._cylinders
@@ -87,17 +90,24 @@ class DiskDrive(PriorityQueue):
     def get_dev_name(self):
         return self._dev_name
 
+    ## Scheduling methods
+
+    def enqueue(self, proc):
+        pass
+
+    def dequeue(self, proc):
+        pass
+
+
 class CPU(PriorityQueue): 
 
-    def __init__(self, a):
+    def __init__(self):
         """ Initializes CPU with no active processes and empty Priority Queue""" 
         self.active = None
         PriorityQueue.__init__(self)
-        self._alpha = a 
 
     def empty(self):
-        """ Returns true if no active process in CPU """ 
-        return False if self.active else True
+        return True if self.active else False
 
     ## Methods to modify active process in CPU
 
@@ -107,38 +117,66 @@ class CPU(PriorityQueue):
         status/location 
 
         """
-        proc.set_proc_loc("Ready")
-        PriorityQueue.enqueue(self,proc)
+        if not (self.active): # No processes in CPU
+            proc.set_proc_loc("CPU")
+            self.active = proc
+        else: # Something in CPU, put in ready queue
+            proc.set_proc_loc("Ready")
+            PriorityQueue.enqueue(self,proc)
         print proc.status()
+
+    def ready_to_CPU(self):
+        """
+        Moves process at head of ready queue to CPU
+        """
+        if PriorityQueue: 
+                self.active = PriorityQueue.dequeue()
+            else: # Nothing in ready queue
+                self.active = None
+                print msg.nothing_in_ready()
+
+    def terminate(self):
+        """
+        Terminates active process in CPU, deallocates memory used by process.
+        Moves next process in Ready Queue to CPU
+
+        """
+        if self.active: 
+            # Terminate active process and replace from ready queue
+            print "{a!s} terminated".format(a = str(self.active).capitalize())
+            proc = self.active
+            del proc
+
+            ready_to_CPU(self)
+
+        else: # Nothing to dequeue
+            raise IndexError 
+
+    def dequeue(self):
+        """
+        Returns current active process in CPU. Removes from CPU and moves next
+        process in Ready Queue to CPU.
+
+        """
+        if self.active: 
+            # Terminate active process and replace from ready queue
+            print "{a!s} terminated".format(a = str(self.active).capitalize())
+            proc = self.active
+            ready_to_CPU(self)
+            return proc
+
+        else: # Nothing to dequeue
+            raise IndexError 
 
     def snapshot(self):
         """ Prints processes in ready queue with header """
         print msg.snapshot_header("ready")
         PriorityQueue.snapshot(self)
 
-    def set_process(self, proc):
-        """ Sets active process in CPU to given process """
-        proc.set_proc_loc("CPU")
-        self.active = proc
-        print "{a!s} is in the CPU".format(a = str(self.active).capitalize())
-
-    def get_process(self):
+    def get_active_process(self):
         """ Returns copy of active process in CPU """ 
         if self.active:
             return self.active
-        else: 
-            raise IndexError
-
-    def terminate_process(self):
-        """
-        Terminates active process in CPU, deallocates memory used by process.
-
-        """
-        if self.active: 
-            print "{a!s} terminated".format(a = str(self.active).capitalize())
-            proc = self.active
-            del proc
-            self.active = None
         else: 
             raise IndexError
 

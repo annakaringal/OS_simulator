@@ -54,25 +54,20 @@ class SysCommand(cmd.Cmd):
 		new_proc = PCB(self.pid_count, alpha, tau)
 
 		# Send process to CPU or ready queue based on what's in CPU
-		if self.cpu.empty():
-			self.cpu.set_process(new_proc)
-		else:
-			self.ready.enqueue(new_proc)
+		self.cpu.enqueue()
 
 	## User Command: Terminate Process
 	def do_t(self, args):
-		""" Terminates current process in CPU"""
+		"""
+		Terminates current process in CPU
+		Replaces with head of ready queue, if ready queue is not empty
+
+		"""
 
 		try:
-			self.cpu.terminate_process()
+			self.cpu.terminate()
 		except IndexError: 
 			print msg.nothing_in_cpu()
-
-		try: 
-			# Remove process from head of ready queue, moves to CPU
-			self.cpu.set_process(self.ready.dequeue())
-		except IndexError:
-			print msg.nothing_in_ready()
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
@@ -85,9 +80,9 @@ class SysCommand(cmd.Cmd):
 
 		# Show active process in CPU & processes in ready queue 
 		if type_to_snapshot == "r": 
-			self.ready.snapshot()
+			self.cpu.snapshot()
 			if not self.cpu.empty(): 
-				print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_process()).capitalize())
+				print "\n" + "Active process in CPU: {a!s}".format(a=str(self.cpu.get_active_process()).capitalize())
 			else: 
 				print "\n" + "No active process in the CPU"
 
