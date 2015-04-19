@@ -29,8 +29,8 @@ class SysCommand(cmd.Cmd):
 		self.all_devices = sys_gen.generate()
 
 		self.cpu = devices.CPU() # TO DO: CHECK INPUTS
-		self.alpha = raw_input("History Parameter >> ");
-		self.tau = raw_input ("Initial Burst Estimate >> ")
+		self.alpha = input("History Parameter >> ");
+		self.tau = input ("Initial Burst Estimate >> ")
 		self.pid_count = 0
 
 		print "Your system is now running with the following devices: "
@@ -51,10 +51,10 @@ class SysCommand(cmd.Cmd):
 		""" Activates a new process """
 
 		self.pid_count += 1
-		new_proc = PCB(self.pid_count, alpha, tau)
+		new_proc = PCB(self.pid_count, self.alpha, self.tau)
 
 		# Send process to CPU or ready queue based on what's in CPU
-		self.cpu.enqueue()
+		self.cpu.enqueue(new_proc)
 
 	## User Command: Terminate Process
 	def do_t(self, args):
@@ -110,31 +110,29 @@ class SysCommand(cmd.Cmd):
 
 				if self.lastcmd.islower(): # SYSTEM CALL (lowercase input)
 
-					# Get active process from CPU
-					if not self.cpu.empty(): 
-						try: 
-							proc = self.cpu.get_process()
-						except IndexError: 
-							print msg.nothing_in_cpu()
-							break
-
-						# Prompt user for and set PCB params 
-
-						print msg.sys_mode("Set system call parameters")
-						proc.set_syst_call_params()
-						proc.set_read_write_params(dev.get_dev_type())
-						print msg.sys_mode("System call parameters set")
-
-						# Add process to back of device queue
-						dev.enqueue(proc)
-
-						# Move process at head of ready queue to CPU
-						try: 
-							self.cpu.set_process(self.ready.dequeue())
-						except IndexError:
-							print msg.nothing_in_ready()
-					else: 
+				# Get active process from CPU, replace with head of ready queue
+					try: 
+						proc = self.cpu.dequeue()
+					except IndexError: 
 						print msg.nothing_in_cpu()
+						break
+
+					# Prompt user for and set PCB params 
+
+					print msg.sys_mode("Set system call parameters")
+					proc.set_syst_call_params()
+					proc.set_read_write_params(dev.get_dev_type())
+
+					if (dev.get_dev_type().lower() == "disk drive"):
+						try:
+							proc.set_cylinder_params(dev.get_num_cylinders())
+						except IndexError: 
+							print "Invalid cylinder number"
+
+					print msg.sys_mode("System call parameters set")
+
+					# Add process to back of device queue
+					dev.enqueue(proc)
 
 				else:  # INTERRUPT  (uppercase input)
 					# Process at head of device queue complete
@@ -143,7 +141,7 @@ class SysCommand(cmd.Cmd):
 						proc = dev.dequeue()
 						print "%s completed %s" %(dev, proc)
 						proc.clear_params()
-						self.ready.enqueue(proc)
+						self.CPU.enqueue(proc)
 					except IndexError:
 						print msg.err("{!s} queue is empty".format(dev))		
 
