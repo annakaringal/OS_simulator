@@ -136,7 +136,6 @@ class SysCommand(cmd.Cmd):
 					try: 
 						proc = dev.dequeue()
 						print "%s completed %s" %(dev, proc)
-						proc.clear_params()
 						self.CPU.enqueue(proc)
 					except IndexError:
 						print msg.err("{!s} queue is empty".format(dev))		
