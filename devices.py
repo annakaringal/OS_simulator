@@ -35,6 +35,15 @@ class Device(FIFOQueue):
         FIFOQueue.enqueue(self,proc)
         print proc.status()
 
+    def deqeueu(self):
+        """
+        Remove and return process at head of queue
+        Clear any parameters passed when queued
+        """
+        proc = FIFOQueue.dequeue(self)
+        proc.clear_params()
+        return proc
+
     ## Methods to print device in human readable form to console
 
     def __repr__(self):
@@ -101,17 +110,19 @@ class DiskDrive(PriorityQueue):
 
     def enqueue(self, proc):
         """
-        Enqueue processes to unfrozen queue.
+        Enqueue processes to unfrozen queue. Update process location.
         If frozen queue is empty, unfreeze and freeze other queue
 
         """
         if self._q1.is_frozen(): #Q1 is frozen, add to Q2
+            proc.set_proc_loc(self._dev_name)
             self._q2.enqueue(proc)
             if self._q1.empty():
                 self._q2.freeze()
                 self._q1.unfreeze()
 
         else: #Q2 frozen, add to Q1
+            proc.set_proc_loc(self._dev_name)
             self._q1.enqueue(proc)
             if self._q2.empty():
                 self._q1.freeze()
@@ -119,11 +130,11 @@ class DiskDrive(PriorityQueue):
 
     def dequeue(self, proc):
         """
-        Remove and return process at head of frozen queue
+        Remove and return process at head of frozen queue. Clear any
+        parameters passed when queued.
 
-        Only dequeue processes from whichever queue is frozen
-        If dequeuing empties queue, freeze queue and unfreeze other queue
-
+        Only dequeue processes from whichever queue is frozen. If dequeuing
+        empties queue, freeze queue and unfreeze other queue
         """ 
         if self._q1.is_frozen():
             proc = self._q1.dequeue()
@@ -137,6 +148,7 @@ class DiskDrive(PriorityQueue):
                 self._q1.freeze()
                 self._q2.unfreeze()
 
+        proc.clear_params()
         return proc
 
     def snapshot(self):
@@ -178,8 +190,9 @@ class CPU(PriorityQueue):
         """
         Moves process at head of ready queue to CPU
         """
-        if PriorityQueue: 
+        if PriorityQueue:
                 self.active = PriorityQueue.dequeue(self)
+                self.active.set_proc_loc("CPU")
         else: # Nothing in ready queue
             self.active = None
             print msg.nothing_in_ready()
@@ -187,7 +200,7 @@ class CPU(PriorityQueue):
     def terminate(self):
         """
         Terminates active process in CPU, deallocates memory used by process.
-        Moves next process in Ready Queue to CPU
+        Moves next process in Ready Queue to CPU.
         """
         if self.active: 
             # Terminate active process and replace from ready queue
