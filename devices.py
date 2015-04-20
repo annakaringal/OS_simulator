@@ -151,19 +151,32 @@ class DiskDrive(PriorityQueue):
         proc.clear_params()
         return proc
 
+     ## Methods to print device in human readable form to console
+
+    def __repr__(self):
+        """ Returns device name and type as a string """ 
+        return self._dev_name + " (" + self._dev_type.lower() + ")"
+
+    def __str__(self):
+        """ Returns device name and type as a string """ 
+        return self._dev_type + " " + self._dev_name
+
     def snapshot(self):
         print msg.snapshot_header(self._dev_name)
 
-        if self._q1.is_frozen():
-            print msg.snapshot_header("PROCESSING [FROZEN]", " ")
-            self._q1.snapshot()
-            print msg.snapshot_header("NEW REQUESTS", " ")
-            self._q2.snapshot()
+        if self._q1.empty() and self._q2.empty():
+            print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
         else:
-            print msg.snapshot_header("PROCESSING [FROZEN]", " ")
-            self._q2.snapshot()
-            print msg.snapshot_header("NEW REQUESTS", " ")
-            self._q1.snapshot()
+            if self._q1.is_frozen():
+                print msg.snapshot_header("PROCESSING [FROZEN]", " ")
+                self._q1.snapshot()
+                print msg.snapshot_header("NEW REQUESTS", " ")
+                self._q2.snapshot()
+            else:
+                print msg.snapshot_header("PROCESSING [FROZEN]", " ")
+                self._q2.snapshot()
+                print msg.snapshot_header("NEW REQUESTS", " ")
+                self._q1.snapshot()
 
 class CPU(PriorityQueue): 
 
