@@ -27,12 +27,36 @@ class SysCommand(cmd.Cmd):
 
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.all_devices = sys_gen.generate()
+ 
+ 		# Set up history parameter alpha & initial bust estimate tau with valid values
+		set_alpha = False
+		while not set_alpha:
+			try: 
+				a = float(input("History Parameter >> "))
+				self.alpha = a
+				set_alpha = True
+			except ValueError: 
+				print msg.err("Please enter a valid number")
+			except OverflowError:
+				print msg.err("Overflow error: Please enter a shorter number")
 
-		self.cpu = devices.CPU() # TO DO: CHECK INPUTS
-		self.alpha = input("History Parameter >> ");
-		self.tau = input ("Initial Burst Estimate >> ")
+		set_tau = False
+		while not set_tau:
+			try: 
+				t = float(raw_input("Initial burst Estimate >> "))
+				if t < 0 or t > 1: raise ValueError
+				self.tau = t
+				set_tau = True
+			except ValueError:
+				print msg.err("Please enter a number between 0 and 1")
+			except OverflowError:
+				print msg.err("Overflow error: Please enter a shorter number")
+
+		# Set up CPU & PID
+		self.cpu = devices.CPU()
 		self.pid_count = 0
 
+		print msg.sys_mode("System Generation Complete")
 		print "Your system is now running with the following devices: "
 		print msg.ruler(38)
 		print "{:<10}{:<28}".format("DEV NAME", "DEV TYPE")
@@ -48,8 +72,10 @@ class SysCommand(cmd.Cmd):
 
 	## User Command: New process
 	def do_a(self, args):
-		""" Activates a new process """
-
+		"""
+		User input: A
+		Activates a new process
+		"""
 		self.pid_count += 1
 		new_proc = PCB(self.pid_count, self.alpha, self.tau)
 
@@ -59,11 +85,10 @@ class SysCommand(cmd.Cmd):
 	## User Command: Terminate Process
 	def do_t(self, args):
 		"""
+		User input: T
 		Terminates current process in CPU
 		Replaces with head of ready queue, if ready queue is not empty
-
 		"""
-
 		try:
 			self.cpu.terminate()
 		except IndexError: 
@@ -71,6 +96,10 @@ class SysCommand(cmd.Cmd):
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
+		"""
+		User input: S
+		Snapshot mode: Displays processes in queue specified by user
+		"""
 
 		# Request device type from user
 		print msg.sys_mode("Snapshot Mode")
@@ -97,6 +126,9 @@ class SysCommand(cmd.Cmd):
 
 	## User Command: Device request or unknown (Invalid) command
 	def default(self, args):
+		"""
+		Default response to user input: Requesting a device or invalid command
+		"""
 
 		device_found = False 
 
@@ -120,10 +152,7 @@ class SysCommand(cmd.Cmd):
 					proc.set_read_write_params(dev.get_dev_type())
 
 					if (dev.get_dev_type().lower() == "disk drive"):
-						try:
-							proc.set_cylinder_params(dev.get_num_cylinders())
-						except IndexError: # TO DO: PROMPT UNTIL VALID NUMBER
-							print "Invalid cylinder number"
+						proc.set_cylinder_params(dev.get_num_cylinders())
 
 					print msg.sys_mode("System call parameters set")
 
@@ -136,7 +165,7 @@ class SysCommand(cmd.Cmd):
 					try: 
 						proc = dev.dequeue()
 						print "%s completed %s" %(dev, proc)
-						self.CPU.enqueue(proc)
+						self.cpu.enqueue(proc)
 					except IndexError:
 						print msg.err("{!s} queue is empty".format(dev))		
 
