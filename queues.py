@@ -117,7 +117,7 @@ class PriorityQueue(Queue):
         if not self._frozen:
             heapq.heappush(self._q,proc)
         else: 
-            raise FrozenQueue("Cannot enqueue to frozen queue")
+            raise FrozenQueueError("Cannot enqueue to frozen queue")
 
     def dequeue(self):
         """
@@ -126,7 +126,7 @@ class PriorityQueue(Queue):
         return heapq.heappop(self._q)
 
 
-class FrozenQueue(Exception):
+class FrozenQueueError(Exception):
     """
     Exception raised for trying to enqueue to frozen queue 
     """
