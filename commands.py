@@ -56,6 +56,11 @@ class SysCommand(cmd.Cmd):
 		self.cpu = devices.CPU()
 		self.pid_count = 0
 
+		# Set up system stats
+		self.completed = 0
+		self.tot_cpu_time = 0
+
+		# Print out list of devices to console
 		print msg.sys_mode("System Generation Complete")
 		print "Your system is now running with the following devices: "
 		print msg.ruler(38)
@@ -86,11 +91,23 @@ class SysCommand(cmd.Cmd):
 	def do_t(self, args):
 		"""
 		User input: T
-		Terminates current process in CPU
-		Replaces with head of ready queue, if ready queue is not empty
+		Terminates current process in CPU.
+		Replaces with head of ready queue, if ready queue is not empty.
+		Update and print system statistics (Number of completed processes and
+		average CPU time per process)
 		"""
 		try:
+			# Update system stats
+			self.tot_cpu_time += self.cpu.get_active_process().total_cpu_time
+			self.completed += 1
+
+			#Terminate current process
 			self.cpu.terminate()
+
+			# Print system stats
+			print "Completed Processes: {:<5} Average CPU time per process: {:<5}".format(self.completed, self.tot_cpu_time/self.completed)
+
+
 		except IndexError: 
 			print msg.nothing_in_cpu()
 
