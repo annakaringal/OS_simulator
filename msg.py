@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             msg.py
 # Created:          March 1, 2015
-# Last Updated:     March 4, 2015
+# Last Updated:     April 20, 2015
 # Description:      Contains methods to display formatted output to terminal
 #					and check input for validity
 
@@ -39,25 +39,19 @@ def nothing_in_ready():
 	return "Ready queue is empty"
 
 ## Validating Input
-
-def set_valid_int(dict, key, prompt):
-	"""
-	Sets value of dictionary key to a positive integer given by user. 
-
-	Checks user input to ensure it is a positive integer value. Keeps
-	prompting user until a valid value is entered.
-
-	"""
-	while dict[key] == None: 
-		try: 
+def get_valid_int(prompt, err_msg="Please enter a valid positive integer"):
+	is_int = False
+	while not is_int:
+		try:
 			num = input(prompt + " >>> ")
 			# Check to see if positive whole number
 			if isinstance(num, (int, long)):
 				if num <= 0: raise ValueError
-				dict[key] = num
+				is_int = True
+				return num
 			else: raise ValueError
 		except:
-			print err("Please enter a valid positive integer")
+			print err(err_msg)
 
 ## System messages
 
