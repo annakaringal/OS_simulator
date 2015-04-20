@@ -32,11 +32,12 @@ class SysCommand(cmd.Cmd):
 		set_alpha = False
 		while not set_alpha:
 			try: 
-				a = float(input("History Parameter >> "))
+				a = float(raw_input("History Parameter >> "))
+				if a < 0 or a > 1: raise ValueError
 				self.alpha = a
 				set_alpha = True
 			except ValueError: 
-				print msg.err("Please enter a valid number")
+				print msg.err("Please enter a number between 0 and 1")
 			except OverflowError:
 				print msg.err("Overflow error: Please enter a shorter number")
 
@@ -44,11 +45,10 @@ class SysCommand(cmd.Cmd):
 		while not set_tau:
 			try: 
 				t = float(raw_input("Initial burst Estimate >> "))
-				if t < 0 or t > 1: raise ValueError
 				self.tau = t
 				set_tau = True
 			except ValueError:
-				print msg.err("Please enter a number between 0 and 1")
+				print msg.err("Please enter a valid number")
 			except OverflowError:
 				print msg.err("Overflow error: Please enter a shorter number")
 
