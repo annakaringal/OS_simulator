@@ -22,7 +22,7 @@ class PCB:
         """
         Initialize with new pid & location, empty system call params.
         Calculate next burst based on given history parameter alpha and inital
-        burst estimate T.
+        burst estimate tau.
 
         """
         self.pid = id_num
@@ -30,7 +30,7 @@ class PCB:
 
         #Set params & burst history
         self.params = dict.fromkeys(param_fields)
-        self.a = alpha
+        self.alpha = alpha
         self.burst_history = []
         self.next_est_burst = alpha * tau
         self.total_cpu_time = 0
@@ -55,13 +55,26 @@ class PCB:
         print "{:<4}".format(str(self.pid)),
 
         for key, val in self.params.iteritems():
-            if self.proc_loc.lower() != "disk drive" and key == "cylinder":
+            if self.proc_loc.lower()[0]!="d" and key=="cylinder":
                 continue
-            print"{:<{w}}".format(str(val)[:10], w=len(key)+1),
+            print"{:^{w}}".format(str(val)[:10], w=len(key)+1),
 
-        print "{:<4}".format(str(self.avg_burst_time())),
-        print "{:<4}".format(str(self.total_cpu_time)),
+        print "{:^9}".format(str(self.avg_burst_time())),
+        print "{:^12}".format(str(self.total_cpu_time)),
         print "\n",
+
+    def headers(self):
+
+        print "{:<4}".format("PID"),
+        for key,val in self.params.iteritems():
+            if self.proc_loc.lower()[0]!="d" and key=="cylinder":
+                continue
+            print"{:<{w}}".format(str(key).replace("_"," ").upper()[:10], w=len(key)+1),
+
+        print "{:9}".format("AVG BURST"),
+        print "{:<12}".format("TOT CPU TIME"),
+        print "\n",
+
 
     ## Methods to compare PCBs
 
@@ -107,7 +120,7 @@ class PCB:
 
         """
         self.last_est_burst = self.next_est_burst
-        self.next_est_burst = (self.burst_history[-1]* (1-self.a)) + (self.a * self.last_est_burst)
+        self.next_est_burst = (self.burst_history[-1]* (1-self.alpha)) + (self.alpha * self.last_est_burst)
 
     def record_burst_time(self, burst): 
         self.burst_history.append(burst)
@@ -150,11 +163,12 @@ class PCB:
             msg.set_valid_int(self.params, "file_len", "File Length")
 
     def set_cylinder_params(self, max_num_cylinders):
-        cyl = raw_input("Cylinder >>> ")
-        if cyl > max_num_cylinders: 
-            raise IndexError
-        else: 
-            self.params["cylinder"] = cyl
+        while self.params["cylinder"] == None:
+            cyl = raw_input("Cylinder >>> ")
+            if cyl > max_num_cylinders or cyl <= 0: 
+                print "Invalid cylinder number. Please try again."
+            else: 
+                self.params["cylinder"] = cyl
 
     def clear_params(self):
         """ Clears all system call & read/write params """
