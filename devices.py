@@ -196,7 +196,7 @@ class CPU(PriorityQueue):
         """
         Moves process at head of ready queue to CPU
         """
-        if PriorityQueue:
+        if not PriorityQueue.empty(self):
                 self.active = PriorityQueue.dequeue(self)
                 self.active.set_proc_loc("CPU")
         else: # Nothing in ready queue
