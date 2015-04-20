@@ -47,7 +47,7 @@ class Queue:
                     end = self.length()
 
                 # Parameter field headers
-                print '{:<5}{:<5}{:<20}{:<20}{:^5}{:^20}'.format("Pos", "PID", *map(lambda pf: pf.replace("_", " ").upper(), self._q[0].params.keys()))
+                self._q[0].headers()
 
                 print msg.ruler()
                 
@@ -98,7 +98,6 @@ class PriorityQueue(Queue):
     def __init__(self, f = False):
         """
         Initialize with empty min heap
-
         """
         self._q = []
         self._frozen = f
