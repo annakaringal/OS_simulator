@@ -128,7 +128,7 @@ class DiskDrive(PriorityQueue):
                 self._q1.freeze()
                 self._q2.unfreeze()
 
-    def dequeue(self, proc):
+    def dequeue(self):
         """
         Remove and return process at head of frozen queue. Clear any
         parameters passed when queued.
@@ -152,12 +152,18 @@ class DiskDrive(PriorityQueue):
         return proc
 
     def snapshot(self):
+        print msg.snapshot_header(self._dev_name)
+
         if self._q1.is_frozen():
+            print msg.snapshot_header("PROCESSING [FROZEN]", " ")
             self._q1.snapshot()
+            print msg.snapshot_header("NEW REQUESTS", " ")
             self._q2.snapshot()
         else:
+            print msg.snapshot_header("PROCESSING [FROZEN]", " ")
             self._q2.snapshot()
-            self._q2.snapshot()
+            print msg.snapshot_header("NEW REQUESTS", " ")
+            self._q1.snapshot()
 
 class CPU(PriorityQueue): 
 
