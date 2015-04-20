@@ -30,7 +30,7 @@ def generate():
 	for d in valid_device_types: 	
 		# Add device type & how many of each type 
 		system_device_types[d] = None
-		msg.set_valid_int(system_device_types, d, d)
+		system_device_types[d] = msg.get_valid_int(d)
 
     # List of all individual devices in system
 	system_devices = []
@@ -44,13 +44,10 @@ def generate():
 
 			if (dev_type == "Disk Drive"):
 				# TO DO: CHECK IF VALID INT
-				cyl = input("Number of cylinders for " + name + " >>> ")
+				cyl = msg.get_valid_int("Num of cylinders for " + name)
 				system_devices.append(devices.DiskDrive(name,cyl))
 			else:
 				system_devices.append(devices.Device(name, dev_type))
-
-
-	print msg.sys_mode("System Generation Complete")
 
 	return system_devices
 	
