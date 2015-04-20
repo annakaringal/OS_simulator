@@ -225,11 +225,13 @@ class CPU(PriorityQueue):
             # Terminate active process and replace from ready queue
             print "{a!s} terminated".format(a = str(self.active).capitalize())
             proc = self.active
-            print "PID: {:<4} AVG BURST TIME: {:<5} TOT CPU TIME: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.total_cpu_time)
-
-            del proc
 
             self.ready_to_CPU()
+
+            print "\n" + "{:-^78}".format(" Terminated Process Report ")
+            print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.total_cpu_time).center(78," ")
+            
+            del proc
 
         else: # Nothing to dequeue
             raise IndexError 

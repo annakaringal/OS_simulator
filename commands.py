@@ -58,7 +58,8 @@ class SysCommand(cmd.Cmd):
 
 		# Set up system stats
 		self.completed = 0
-		self.tot_cpu_time = 0
+		self.total_cpu_time = 0
+		self.avg_cpu_time = 0
 
 		# Print out list of devices to console
 		print msg.sys_mode("System Generation Complete")
@@ -98,15 +99,18 @@ class SysCommand(cmd.Cmd):
 		"""
 		try:
 			# Update system stats
-			self.tot_cpu_time += self.cpu.get_active_process().total_cpu_time
+			self.total_cpu_time += self.cpu.get_active_process().total_cpu_time
 			self.completed += 1
+			if self.completed == 0: 
+				self.avg_cpu_time = 0
+			else:
+				self.avg_cpu_time = self.total_cpu_time / self.completed
 
 			#Terminate current process
 			self.cpu.terminate()
 
 			# Print system stats
-			print "Completed Processes: {:<5} Average CPU time per process: {:<5}".format(self.completed, self.tot_cpu_time/self.completed)
-
+			self.print_system_stats()
 
 		except IndexError: 
 			print msg.nothing_in_cpu()
@@ -135,12 +139,11 @@ class SysCommand(cmd.Cmd):
 				if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 					dev.snapshot()
 
-		# Print system stats
-		print "Completed Processes: {:<5} Average CPU time per process: {:<5}".format(self.completed, self.tot_cpu_time/self.completed)
-
-
 		else: 
 			print msg.err("Unknown device type")
+
+		# Print system stats
+		self.print_system_stats()
 
 		print msg.sys_mode("Exiting Snapshot Mode")
 
@@ -224,7 +227,10 @@ class SysCommand(cmd.Cmd):
 		""" Exits program if end of file char is inputted by user """
 		print "Goodbye!"
 		return True
-		
+
+	def print_system_stats(self):
+		print "\n" + "{:-^78}".format(" Completed Processes Report ")
+		print "Total Completed: {:<5} Avg Total CPU Time: {:<5}".format(self.completed, self.avg_cpu_time).center(78, ' ')
 
 	## Command shortcuts & aliases
 	do_A = do_a
