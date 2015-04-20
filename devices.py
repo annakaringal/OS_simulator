@@ -234,7 +234,7 @@ class CPU(PriorityQueue):
             self.ready_to_CPU()
 
             # Update burst times
-            burst = int(raw_input("Time Spent in CPU >>> "))
+            burst = msg.get_valid_int("Time Spent in CPU")
             proc.record_burst_time(burst)
             return proc
 
