@@ -44,7 +44,7 @@ class SysCommand(cmd.Cmd):
 		set_tau = False
 		while not set_tau:
 			try: 
-				t = float(raw_input("Initial burst Estimate >> "))
+				t = float(raw_input("Initial Burst Estimate >> "))
 				self.tau = t
 				set_tau = True
 			except ValueError:

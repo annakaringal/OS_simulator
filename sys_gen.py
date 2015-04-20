@@ -32,6 +32,8 @@ def generate():
 		system_device_types[d] = None
 		system_device_types[d] = msg.get_valid_int(d)
 
+	print msg.ruler()
+
     # List of all individual devices in system
 	system_devices = []
 
@@ -47,6 +49,8 @@ def generate():
 				system_devices.append(devices.DiskDrive(name,cyl))
 			else:
 				system_devices.append(devices.Device(name, dev_type))
+
+	print msg.ruler()
 
 	return system_devices
 	
