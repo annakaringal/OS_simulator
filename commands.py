@@ -135,6 +135,10 @@ class SysCommand(cmd.Cmd):
 				if type_to_snapshot == dev.get_dev_type()[0].lower(): 
 					dev.snapshot()
 
+		# Print system stats
+		print "Completed Processes: {:<5} Average CPU time per process: {:<5}".format(self.completed, self.tot_cpu_time/self.completed)
+
+
 		else: 
 			print msg.err("Unknown device type")
 
