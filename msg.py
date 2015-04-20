@@ -14,15 +14,15 @@ screen_width = 78
 
 def ruler(len=screen_width): 
 	""" Prints a horizontal line the width of the screen """
-	return "{:-^{l}}".format("", l=len)
+	return "{:-^{l}}".format("", char="=", l=len)
 
 def sys_mode(mode_name, len=screen_width):
 	""" Prints name of system mode as a header """
 	return "\n" + "{:#^{l}}".format(" " + mode_name.upper() + " ", l=len) + "\n"
 
-def snapshot_header(q_name, len=screen_width):
+def snapshot_header(q_name, char = "=", len=screen_width):
 	""" Prints name of queue displayed as a header """
-	return "\n" + "{:=^{l}}".format(" " + q_name.upper() + " QUEUE ", l=len) + "\n"
+	return "\n" + "{:{c}^{l}}".format(" " + q_name.upper() + " QUEUE ", c=char, l=len) + "\n"
 
 ## Error messages
 
