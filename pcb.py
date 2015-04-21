@@ -67,6 +67,10 @@ class PCB:
 
         print "{:^9}".format(str(self.avg_burst_time())),
         print "{:^12}".format(str(self.total_cpu_time)),
+        if self.proc_loc.lower()[0] == "r":
+            print "{:^14}".format(str(self.next_est_burst)),
+        print "\n",
+
 
     def headers(self):
         """
@@ -77,10 +81,12 @@ class PCB:
         for key,val in self.params.iteritems():
             if self.proc_loc.lower()[0]!="d" and key=="cylinder":
                 continue
-            print"{:<{w}}".format(str(key).replace("_"," ").upper()[:10], w=len(key)+1),
+            print"{:<{w}}".format(str(key).replace("_"," ").capitalize()[:10], w=len(key)+1),
 
-        print "{:9}".format("AVG BURST"),
-        print "{:<12}".format("TOT CPU TIME"),
+        print "{:9}".format("Avg Burst"),
+        print "{:<12}".format("Tot CPU Time"),
+        if self.proc_loc.lower()[0] == "r":
+            print "{:^14}".format("Next Est Burst"),
         print "\n",
 
 
