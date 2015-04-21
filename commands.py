@@ -4,8 +4,8 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	April 19, 2015
-# Description:		Generates instances of system deveices and queues.
+# Last Updated: 	April 21, 2015
+# Description:		Generates instances of system devices and queues.
 #	 				Prompts user for commands in command lineand performs 
 #					actions on system devices, queues and processes 
 #					based on input.
@@ -41,16 +41,7 @@ class SysCommand(cmd.Cmd):
 			except OverflowError:
 				print msg.err("Overflow error: Please enter a shorter number")
 
-		set_tau = False
-		while not set_tau:
-			try: 
-				t = float(raw_input("Initial Burst Estimate >> "))
-				self.tau = t
-				set_tau = True
-			except ValueError:
-				print msg.err("Please enter a valid number")
-			except OverflowError:
-				print msg.err("Overflow error: Please enter a shorter number")
+		self.tau = msg.get_valid_int("Initial Burst Estimate")
 
 		# Set up CPU & PID
 		self.cpu = devices.CPU()
