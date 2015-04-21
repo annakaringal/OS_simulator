@@ -165,7 +165,7 @@ class DiskDrive(PriorityQueue):
         print msg.snapshot_header(self._dev_name)
 
         if self._q1.empty() and self._q2.empty():
-            print '{:^78}'.format("EMPTY: No processes in queue") + "\n"
+            print '{:^78}'.format("EMPTY: No processes in queue")
         else:
             if self._q1.is_frozen():
                 print msg.snapshot_header("PROCESSING [FROZEN]", " ")
