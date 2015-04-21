@@ -67,7 +67,6 @@ class PCB:
 
         print "{:^9}".format(str(self.avg_burst_time())),
         print "{:^12}".format(str(self.total_cpu_time)),
-        print "\n",
 
     def headers(self):
         """
