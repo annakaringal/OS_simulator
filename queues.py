@@ -4,8 +4,12 @@
 # Author:           Anna Cristina Karingal
 # Name:             queues.py
 # Created:          February 27, 2015
-# Last Updated:     April 20, 2015
+# Last Updated:     April 21, 2015
 # Description:      Classes for different types of queues in the system.
+#                       - FIFO Queue implemented with deque
+#                       - Priority Queue implemented with min heap
+#                           Priority can be frozen or unfrozen
+#                           Raises FrozenQueueError if enqueing to frozen queue
 #                   Contains methods allowing user to view what is in the
 #                   queue and enqueue or dequeue a process.
 
@@ -19,7 +23,6 @@ class Queue:
 
     def __init__(self):
         self._q = None
-
 
     def empty(self):
         return True if not self._q else False
