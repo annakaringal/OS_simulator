@@ -47,10 +47,17 @@ class PCB:
     	return "process #" + str(self.pid)
 
     def status(self):
-        return "{a!s} is in {q!s} queue".format(a = str(self).capitalize(), q = self.proc_loc.lower())
+        """ Prints which queue/device process is currently in """
+        if not self.proc_loc.lower()== "cpu":
+            return "{a!s} is in {q!s} Queue".format(a = str(self).capitalize(), q = self.proc_loc.capitalize())
+        else: 
+            return "{a!s} is in {q!s}".format(a = str(self).capitalize(), q = self.proc_loc.upper())
 
     def snapshot(self):
-        
+        """
+        Prints PCB attributes and any current system call parameters in a 
+        formatted fashion, on a single line
+        """
         print "{:<4}".format(str(self.pid)),
 
         for key, val in self.params.iteritems():
@@ -63,7 +70,10 @@ class PCB:
         print "\n",
 
     def headers(self):
-
+        """
+        Prints name of system call parameters and PCB attributes in formatted
+        fashion, on a single line
+        """
         print "{:<4}".format("PID"),
         for key,val in self.params.iteritems():
             if self.proc_loc.lower()[0]!="d" and key=="cylinder":
@@ -121,11 +131,18 @@ class PCB:
         self.next_est_burst = (self.burst_history[-1]* (1-self.alpha)) + (self.alpha * self.last_est_burst)
 
     def record_burst_time(self, burst): 
+        """
+        Updates burst history, total CPU time and calculates next estimated
+        burst time with given input
+        """
         self.burst_history.append(burst)
         self.total_cpu_time += burst
         self.calc_next_est_burst()
 
     def avg_burst_time(self):
+        """
+        Returns average burst time for each CPU burst
+        """
         return self.total_cpu_time / len(self.burst_history) if self.burst_history else 0
 
     ## Setting/clearing system call params for pcb
@@ -158,6 +175,12 @@ class PCB:
             self.params["file_len"] = msg.get_valid_int("File Length")
 
     def set_cylinder_params(self, max_num_cylinders):
+        """
+        Prompts user for which disk drive cylinder to access, validates 
+        input and sets appropriate system call parameter.
+
+        Precondition: Process is in disk drive
+        """
         while self.params["cylinder"] == None:
             cyl = msg.get_valid_int("Cylinder")
             if cyl > max_num_cylinders: 

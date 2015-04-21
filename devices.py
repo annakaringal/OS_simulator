@@ -201,7 +201,7 @@ class CPU(PriorityQueue):
             proc.set_proc_loc("CPU")
             self.active = proc
         else: # Something in CPU, put in ready queue
-            proc.set_proc_loc("Ready")
+            proc.set_proc_loc("ready")
             PriorityQueue.enqueue(self,proc)
         print proc.status()
 
