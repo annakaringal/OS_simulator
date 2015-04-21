@@ -43,10 +43,10 @@ class Queue:
             start = 0
             end = max_height
 
-            while start < self.length():
+            while start < len(self._q):
 
-                if end > self.length():
-                    end = self.length()
+                if end > len(self._q):
+                    end = len(self._q)
 
                 # Parameter field headers
                 self._q[0].headers()
@@ -57,7 +57,7 @@ class Queue:
                     # Print single process in queue
                     self._q[p].snapshot()
 
-                if end < self.length(): 
+                if end < len(self._q): 
                     try: 
                         print ""
                         raw_input("\t" + "... press any key to view next items in queue ...")
@@ -127,6 +127,16 @@ class PriorityQueue(Queue):
         Remove and return task with lowest priority
         """
         return heapq.heappop(self._q)
+
+    def snapshot(self):
+        """
+        Prints a paginated view of processes & process parameters in 
+        queue, in the order they will be processed
+        """
+        # Must sort heap first to display processes in order
+        # Python's sort is O(n logn)... is there a better way to do this?
+        self._q.sort()
+        Queue.snapshot(self)
 
 
 class FrozenQueueError(Exception):
