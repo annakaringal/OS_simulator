@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     April 20, 2015
+# Last Updated:     April 27, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -31,7 +31,7 @@ class PCB:
         self.params = dict.fromkeys(param_fields)
         self.alpha = alpha
         self.burst_history = []
-        self.next_est_burst = alpha * tau
+        self.next_est_burst = tau
         self.total_cpu_time = 0
 
     def set_proc_loc(self, p_loc):
