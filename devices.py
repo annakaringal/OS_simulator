@@ -38,11 +38,21 @@ class Device(FIFOQueue):
     def dequeue(self):
         """
         Remove and return process at head of queue
-        Clear any parameters passed when queued
+        Clear any parameters passed when queued, records burst time
         """
         proc = FIFOQueue.dequeue(self)
         proc.clear_params()
+        record_burst(proc)
         return proc
+
+    ## Methods to set PCB attributes
+    def record_burst(self, proc):
+        """
+        Get and update burst time for process proc
+        """
+        burst = msg.get_valid_int("Time Spent in " + self._dev_name)
+        proc.record_burst_time(burst)
+
 
     ## Methods to print device in human readable form to console
 
@@ -149,6 +159,7 @@ class DiskDrive(PriorityQueue):
                 self._q2.unfreeze()
 
         proc.clear_params()
+        record_burst(proc)
         return proc
 
      ## Methods to print device in human readable form to console
@@ -186,6 +197,7 @@ class CPU(PriorityQueue):
         Priority Queue
         """ 
         self.active = None
+        self._dev_name = "CPU"
         PriorityQueue.__init__(self)
 
     def empty(self):
@@ -198,7 +210,7 @@ class CPU(PriorityQueue):
         Adds process to back of ready queue and updates PCB status/location 
         """
         if not self.active: # No processes in CPU
-            proc.set_proc_loc("CPU")
+            proc.set_proc_loc(self._dev_name)
             self.active = proc
         else: # Something in CPU, put in ready queue
             proc.set_proc_loc("ready")
@@ -211,7 +223,7 @@ class CPU(PriorityQueue):
         """
         if not PriorityQueue.empty(self):
                 self.active = PriorityQueue.dequeue(self)
-                self.active.set_proc_loc("CPU")
+                self.active.set_proc_loc(self._dev_name)
         else: # Nothing in ready queue
             self.active = None
             print msg.nothing_in_ready()
@@ -225,9 +237,12 @@ class CPU(PriorityQueue):
             # Terminate active process and replace from ready queue
             print "{a!s} terminated".format(a = str(self.active).capitalize())
             proc = self.active
-
             self.ready_to_CPU()
 
+            # Get & update burst time
+            record_burst(proc)
+
+            # Print stats
             print "\n" + "{:-^78}".format(" Terminated Process Report ")
             print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.total_cpu_time).center(78," ")
             
@@ -248,9 +263,8 @@ class CPU(PriorityQueue):
             proc = self.active
             self.ready_to_CPU()
 
-            # Update burst times
-            burst = msg.get_valid_int("Time Spent in CPU")
-            proc.record_burst_time(burst)
+            # Get & update burst time
+            record_burst(proc)
             return proc
 
         else: # Nothing to dequeue
