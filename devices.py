@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     April 19, 2015
+# Last Updated:     April 29, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
@@ -42,17 +42,8 @@ class Device(FIFOQueue):
         """
         proc = FIFOQueue.dequeue(self)
         proc.clear_params()
-        record_burst(proc)
+        self.record_burst(proc)
         return proc
-
-    ## Methods to set PCB attributes
-    def record_burst(self, proc):
-        """
-        Get and update burst time for process proc
-        """
-        burst = msg.get_valid_int("Time Spent in " + self._dev_name)
-        proc.record_burst_time(burst)
-
 
     ## Methods to print device in human readable form to console
 
@@ -159,7 +150,7 @@ class DiskDrive(PriorityQueue):
                 self._q2.unfreeze()
 
         proc.clear_params()
-        record_burst(proc)
+        self.record_burst(proc)
         return proc
 
      ## Methods to print device in human readable form to console
@@ -240,7 +231,7 @@ class CPU(PriorityQueue):
             self.ready_to_CPU()
 
             # Get & update burst time
-            record_burst(proc)
+            self.record_burst(proc)
 
             # Print stats
             print "\n" + "{:-^78}".format(" Terminated Process Report ")
@@ -264,7 +255,7 @@ class CPU(PriorityQueue):
             self.ready_to_CPU()
 
             # Get & update burst time
-            record_burst(proc)
+            self.record_burst(proc)
             return proc
 
         else: # Nothing to dequeue

@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             queues.py
 # Created:          February 27, 2015
-# Last Updated:     April 21, 2015
+# Last Updated:     April 29, 2015
 # Description:      Classes for different types of queues in the system.
 #                       - FIFO Queue implemented with deque
 #                       - Priority Queue implemented with min heap
@@ -30,6 +30,15 @@ class Queue:
     def length(self): 
         """ Returns length of queue """
         return len(self._q)
+
+
+    ## Methods to set PCB attributes
+    def record_burst(self, proc):
+        """
+        Get and update burst time for process proc
+        """
+        burst = msg.get_valid_int("Time Spent in " + self._dev_name)
+        proc.record_burst_time(burst)
 
     def snapshot(self):
         """
