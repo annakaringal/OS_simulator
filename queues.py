@@ -37,7 +37,7 @@ class Queue:
         """
         Get and update burst time for process proc
         """
-        burst = msg.get_valid_int("Time Spent in " + self._dev_name)
+        burst = msg.get_valid_int("Time Spent in " + self._dev_name + "since last interrupt")
         proc.record_burst_time(burst)
 
     def snapshot(self):
