@@ -250,7 +250,7 @@ class CPU(PriorityQueue):
 
             # Print stats
             print "\n" + "{:-^78}".format(" Terminated Process Report ")
-            print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.total_cpu_time).center(78," ")
+            print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.tot_burst_time()).center(78," ")
             
             del proc
 
