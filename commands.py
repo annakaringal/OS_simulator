@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	April 21, 2015
+# Last Updated: 	May 1, 2015
 # Description:		Generates instances of system devices and queues.
 #	 				Prompts user for commands in command lineand performs 
 #					actions on system devices, queues and processes 
@@ -89,8 +89,8 @@ class SysCommand(cmd.Cmd):
 		average CPU time per process)
 		"""
 		try:
-			# Update system stats
-			self.total_cpu_time += self.cpu.get_active_process().total_cpu_time
+			# Update system stats with total CPU time for terminated process
+			self.total_cpu_time += self.cpu.get_active_process().tot_burst_time()
 			self.completed += 1
 			if self.completed == 0: 
 				self.avg_cpu_time = 0

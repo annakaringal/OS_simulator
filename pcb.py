@@ -32,7 +32,6 @@ class PCB:
         self.alpha = alpha
         self.burst_history = []
         self.next_est_burst = tau
-        self.total_cpu_time = 0
         self.curr_burst = 0
 
     def set_proc_loc(self, p_loc):
@@ -67,7 +66,7 @@ class PCB:
             print"{:^{w}}".format(str(val)[:10], w=len(key)+1),
 
         print "{:^9}".format(str(self.avg_burst_time())),
-        print "{:^12}".format(str(self.total_cpu_time)),
+        print "{:^12}".format(str(sum(self.burst_history))),
         if self.proc_loc.lower()[0] == "r":
             print "{:^14}".format(str(self.next_est_burst)),
         print "\n",
@@ -146,7 +145,6 @@ class PCB:
         """
         self.curr_burst += burst
         self.burst_history.append(self.curr_burst)
-        self.total_cpu_time += burst
         self.calc_next_est_burst()
 
     def update_burst_time(self, elapsed):
@@ -164,7 +162,13 @@ class PCB:
         """
         Returns average burst time for each CPU burst
         """
-        return self.total_cpu_time / len(self.burst_history) if self.burst_history else 0
+        return sum(self.burst_history) / len(self.burst_history) if self.burst_history else 0
+
+    def tot_burst_time(self):
+        """ 
+        Returns total of all CPU bursts
+        """
+        return sum(self.burst_history)
 
     def clear_curr_bust (self):
         """
