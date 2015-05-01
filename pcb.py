@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     April 27, 2015
+# Last Updated:     May 1, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -33,6 +33,7 @@ class PCB:
         self.burst_history = []
         self.next_est_burst = tau
         self.total_cpu_time = 0
+        self.curr_burst = 0
 
     def set_proc_loc(self, p_loc):
         """ Sets location of process, i.e. which queue/device it is in"""
@@ -140,15 +141,30 @@ class PCB:
         Updates burst history, total CPU time and calculates next estimated
         burst time with given input
         """
-        self.burst_history.append(burst)
+        curr_burst += burst
+        self.burst_history.append(curr_burst)
         self.total_cpu_time += burst
         self.calc_next_est_burst()
+
+    def update_burst_time(self, elapsed):
+        """
+        Given an elapsed amount of time, updates current CPU burst time used
+        and next_est_burst based on how much time elapsed
+        """
+        curr_burst += elapsed
+        next_est_burst -= elapsed
 
     def avg_burst_time(self):
         """
         Returns average burst time for each CPU burst
         """
         return self.total_cpu_time / len(self.burst_history) if self.burst_history else 0
+
+    def clear_curr_bust (self):
+        """
+        Resets current bust time to zero
+        """
+        curr_burst = 0
 
     ## Setting/clearing system call params for pcb
 

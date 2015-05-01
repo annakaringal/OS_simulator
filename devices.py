@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     April 29, 2015
+# Last Updated:     May 1, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
@@ -203,9 +203,24 @@ class CPU(PriorityQueue):
         if not self.active: # No processes in CPU
             proc.set_proc_loc(self._dev_name)
             self.active = proc
-        else: # Something in CPU, put in ready queue
+        else:
+            # Prompt for time since last interrupt
+            # Update burst time for current process, insert  into ready queue
+            elapsed = msg.get_valid_int("Time since last interrupt: ")
+            self.active.update_burst_time(elapsed)
             proc.set_proc_loc("ready")
             PriorityQueue.enqueue(self,proc)
+
+            # If active process in CPU now has lower next est burst than 
+            # process in head of ready queue, move head of ready queue to CPU
+            # and enqueue old active process.
+            if PriorityQueue[0].next_est_burst < self.active.next_est_burst: 
+                p = PriorityQueue.dequeue
+                self.active.set_proc_loc("ready")
+                p.set_proc_loc("CPU")
+                PriorityQueue.enqueue(self.active)
+                self.active = p
+
         print proc.status()
 
     def ready_to_CPU(self):
