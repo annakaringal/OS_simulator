@@ -152,10 +152,13 @@ class PCB:
     def update_burst_time(self, elapsed):
         """
         Given an elapsed amount of time, updates current CPU burst time used
-        and next_est_burst based on how much time elapsed
+        and next_est_burst based on how much time elapsed. 
         """
         self.curr_burst += elapsed
-        self.next_est_burst -= elapsed
+        if self.next_est_burst - elapsed >= 0: 
+            self.next_est_burst -= elapsed
+        else: 
+            self.next_est_burst = 0
 
     def avg_burst_time(self):
         """
