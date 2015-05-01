@@ -206,7 +206,7 @@ class CPU(PriorityQueue):
         else:
             # Prompt for time since last interrupt
             # Update burst time for current process, insert  into ready queue
-            elapsed = msg.get_valid_int("Time since last interrupt: ")
+            elapsed = msg.get_valid_int("Time since last interrupt")
             self.active.update_burst_time(elapsed)
             proc.set_proc_loc("ready")
             PriorityQueue.enqueue(self,proc)
@@ -214,11 +214,11 @@ class CPU(PriorityQueue):
             # If active process in CPU now has lower next est burst than 
             # process in head of ready queue, move head of ready queue to CPU
             # and enqueue old active process.
-            if PriorityQueue[0].next_est_burst < self.active.next_est_burst: 
-                p = PriorityQueue.dequeue
+            if PriorityQueue.head(self) < self.active:
+                p = PriorityQueue.dequeue(self)
                 self.active.set_proc_loc("ready")
                 p.set_proc_loc("CPU")
-                PriorityQueue.enqueue(self.active)
+                PriorityQueue.enqueue(self,self.active)
                 self.active = p
 
         print proc.status()
