@@ -137,6 +137,7 @@ class PriorityQueue(Queue):
         """
         return heapq.heappop(self._q)
 
+    # Methods to see what's in the queue
     def snapshot(self):
         """
         Prints a paginated view of processes & process parameters in 
@@ -146,6 +147,12 @@ class PriorityQueue(Queue):
         # Python's sort is O(n logn)... is there a better way to do this?
         self._q.sort()
         Queue.snapshot(self)
+
+    def head(self):
+        """
+        Return process at head of queue, but do not dequeue
+        """
+        return self._q[0]
 
 
 class FrozenQueueError(Exception):
