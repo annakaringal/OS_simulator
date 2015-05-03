@@ -4,11 +4,12 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 2, 2015
+# Last Updated:     May 3, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
 
+from __future__ import division
 import sys
 from functools import total_ordering
 import msg

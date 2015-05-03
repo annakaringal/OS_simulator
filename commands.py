@@ -4,12 +4,13 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 1, 2015
+# Last Updated: 	May 3, 2015
 # Description:		Generates instances of system devices and queues.
 #	 				Prompts user for commands in command lineand performs 
 #					actions on system devices, queues and processes 
 #					based on input.
 
+from __future__ import division
 import sys
 import cmd
 
