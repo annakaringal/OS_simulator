@@ -32,6 +32,7 @@ class PCB:
         self.params = dict.fromkeys(param_fields)
         self.alpha = alpha
         self.burst_history = []
+        self.last_est_burst = tau
         self.next_est_burst = tau
         self.curr_burst = 0
 
@@ -137,10 +138,9 @@ class PCB:
         """
         Calculates next estimated burst time based on previous estimated burst
         time, last recorded burst time, and history parameter alpha
-
         """
+        self.next_est_burst = (self.burst_history[-1] * (1-self.alpha)) + (self.last_est_burst * self.alpha)
         self.last_est_burst = self.next_est_burst
-        self.next_est_burst = (self.burst_history[-1]* (1-self.alpha)) + (self.alpha * self.last_est_burst)
 
     def record_burst_time(self, burst): 
         """
