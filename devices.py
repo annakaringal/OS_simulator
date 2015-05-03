@@ -154,7 +154,6 @@ class DiskDrive(PriorityQueue):
      ## Methods to print device in human readable form to console
 
     def __repr__(self):
-            nsert  into ready queue
         return self._dev_name + " (" + self._dev_type.lower() + ")"
 
     def __str__(self):
