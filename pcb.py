@@ -102,9 +102,12 @@ class PCB:
         If in disk drive queue, compare based on requested cylinder.
         Else, compare by PID.
         """
+        # If process is in ready queue or CPU, compare using next est burst
         if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower() == "cpu":
             return self.next_est_burst == other.next_est_burst
+        # If process is in disk drive, compare using cylinder number
         elif (self.proc_loc.lower()[0] == "d"):
+        # All other locations, compare using PID
             return self.params["cylinder"] == other.params["cylinder"]
         else:
             return self.pid == other.pid
@@ -128,7 +131,7 @@ class PCB:
             return self.pid < other.pid
 
 
-    ## Calculating burst time
+    ## Calculating burst times
 
     def calc_next_est_burst (self):
         """
@@ -153,7 +156,10 @@ class PCB:
         Given an elapsed amount of time, updates current CPU burst time used
         and next_est_burst based on how much time elapsed. 
         """
+        # Update current burst record with elapsed CPU time
         self.curr_burst += elapsed
+
+        # Next est burst cannot be less than 0
         if self.next_est_burst - elapsed >= 0: 
             self.next_est_burst -= elapsed
         else: 
