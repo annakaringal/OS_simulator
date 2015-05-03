@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 1, 2015
+# Last Updated:     May 2, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -67,7 +67,7 @@ class PCB:
 
         print "{:^9}".format(str(self.avg_burst_time())),
         print "{:^12}".format(str(sum(self.burst_history))),
-        if self.proc_loc.lower()[0] == "r":
+        if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower()== "CPU":
             print "{:^14}".format(str(self.next_est_burst)),
         print "\n",
 
@@ -170,7 +170,7 @@ class PCB:
         """
         return sum(self.burst_history)
 
-    def clear_curr_bust (self):
+    def clear_curr_burst (self):
         """
         Resets current bust time to zero
         """
