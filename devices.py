@@ -76,7 +76,7 @@ class Device(FIFOQueue):
 class DiskDrive(PriorityQueue):
     """
     Initializes new disk drive with device name and two empty queues
-    to implement FSCAN scheduling
+    to implement FLOOK disk scheduling
     """ 
 
     def __init__(self, dname, cyl):
@@ -154,7 +154,7 @@ class DiskDrive(PriorityQueue):
      ## Methods to print device in human readable form to console
 
     def __repr__(self):
-        """ Returns device name and type as a string """ 
+            nsert  into ready queue
         return self._dev_name + " (" + self._dev_type.lower() + ")"
 
     def __str__(self):
@@ -162,6 +162,9 @@ class DiskDrive(PriorityQueue):
         return self._dev_type + " " + self._dev_name
 
     def snapshot(self):
+        """
+        Prints active processes in disk drive queue, in order they will be processed
+        """
         print msg.snapshot_header(self._dev_name)
 
         if self._q1.empty() and self._q2.empty():
@@ -198,20 +201,24 @@ class CPU(PriorityQueue):
         """
         Adds process to back of ready queue and updates PCB status/location 
         """
-        if not self.active: # No processes in CPU
+        if not self.active:
+            # No processes in CPU, process goes straight to CPU
+            # No need to prompt for time
             proc.set_proc_loc(self._dev_name)
             self.active = proc
         else:
             # Prompt for time since last interrupt
-            # Update burst time for current process, insert  into ready queue
             elapsed = msg.get_valid_int("Time since last interrupt")
+
+            # Update burst time for current process
             self.active.update_burst_time(elapsed)
+
+            # Insert  into ready queue
             proc.set_proc_loc("ready")
             PriorityQueue.enqueue(self,proc)
 
-            # If active process in CPU now has lower next est burst than 
-            # process in head of ready queue, move head of ready queue to CPU
-            # and enqueue old active process.
+            # Move active process to ready queue if it now has a higher
+            # remaining burst time left than any process in the ready queue
             if PriorityQueue.head(self) < self.active:
                 p = PriorityQueue.dequeue(self)
                 self.active.set_proc_loc("ready")
@@ -279,7 +286,7 @@ class CPU(PriorityQueue):
             raise IndexError 
 
     def snapshot(self):
-        """ Prints processes in ready queue with header """
+        """ Prints processes in ready queue, plus active process in CPU with headers """
         print msg.snapshot_header("ready")
         PriorityQueue.snapshot(self)
         if self.active: 
