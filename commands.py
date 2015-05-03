@@ -89,16 +89,18 @@ class SysCommand(cmd.Cmd):
 		average CPU time per process)
 		"""
 		try:
+			proc = self.cpu.get_active_process()
+
+			#Terminate current process
+			self.cpu.terminate()
+
 			# Update system stats with total CPU time for terminated process
-			self.total_cpu_time += self.cpu.get_active_process().tot_burst_time()
+			self.total_cpu_time += proc.tot_burst_time()
 			self.completed += 1
 			if self.completed == 0: 
 				self.avg_cpu_time = 0
 			else:
 				self.avg_cpu_time = self.total_cpu_time / self.completed
-
-			#Terminate current process
-			self.cpu.terminate()
 
 			# Print system stats
 			self.print_system_stats()
