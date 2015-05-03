@@ -267,8 +267,12 @@ class CPU(PriorityQueue):
             proc = self.active
             self.ready_to_CPU()
 
-            # Get & update burst time
+            # Get & record burst time
             self.record_burst(proc)
+
+            # Clear current burst time before exiting CPU
+            proc.clear_curr_burst()
+
             return proc
 
         else: # Nothing to dequeue
