@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     May 1, 2015
+# Last Updated:     May 2, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
@@ -42,7 +42,6 @@ class Device(FIFOQueue):
         """
         proc = FIFOQueue.dequeue(self)
         proc.clear_params()
-        self.record_burst(proc)
         return proc
 
     ## Methods to print device in human readable form to console
@@ -150,7 +149,6 @@ class DiskDrive(PriorityQueue):
                 self._q2.unfreeze()
 
         proc.clear_params()
-        self.record_burst(proc)
         return proc
 
      ## Methods to print device in human readable form to console
@@ -281,7 +279,7 @@ class CPU(PriorityQueue):
         print msg.snapshot_header("ready")
         PriorityQueue.snapshot(self)
         if self.active: 
-            print "\n" + "Active process in CPU: {a!s}".format(a=str(self.active))
+            print "\n" + "Active process in CPU: {a!s} ({b!s})".format(a=str(self.active), b=str(self.active.next_est_burst))
         else:
             print "\n" + "No active process in the CPU"
 

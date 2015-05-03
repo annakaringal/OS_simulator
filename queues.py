@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             queues.py
 # Created:          February 27, 2015
-# Last Updated:     April 29, 2015
+# Last Updated:     May 2, 2015
 # Description:      Classes for different types of queues in the system.
 #                       - FIFO Queue implemented with deque
 #                       - Priority Queue implemented with min heap
@@ -37,7 +37,7 @@ class Queue:
         """
         Get and update burst time for process proc
         """
-        burst = msg.get_valid_int("Time Spent in " + self._dev_name + "since last interrupt")
+        burst = msg.get_valid_int("Time Spent in " + self._dev_name + " since last interrupt")
         proc.record_burst_time(burst)
 
     def snapshot(self):
