@@ -20,7 +20,7 @@ Once you run the program, it will enter system generation (Sys Gen) mode and pro
 
     Tau(next) = (alpha * Tau(previous)) + ((1-alpha) + t(previous))
 
-where `t(previous)` is the actual previous CPU burst and Tau is the estimated burst. All processes are initialized with an estimated next burst of Tau(0).
+where `t(previous)` is the actual previous CPU burst and `Tau` is the estimated burst. All processes are initialized with an estimated next burst of `Tau(0)`.
 
 **Disk Scheduling** is implemented using an FLOOK algorithm. 
 
@@ -29,11 +29,17 @@ Once the program exits sys gen mode, the user can input commands to simulate sys
 ## Commands
 
 `a`  -- Activates a new process
+
 `t`  -- Terminates current process in CPU
+
 `s`  -- Enters snapshot mode. Enter the prefix of the device type to see a list of processes in devices of that type.
+
 `p1` -- enter the name of any device in lowercase to simulate the active process in the CPU requesting that device via a system call
+
 `P1` -- enter the name of any device in uppercase to simulate the active process in  that device is finished and wants to go back into the ready queue.
+
 `h`  -- Help to see a list of commands
+
 `q` or `Ctrl+D` to quit
 
 ## Coming soon
