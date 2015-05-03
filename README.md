@@ -1,4 +1,4 @@
-# OS_Simulator
+# OS Simulator
 
 Simulates how an operating system manages processes and process queues.
 
@@ -32,7 +32,7 @@ Once the program exits sys gen mode, the user can input commands to simulate sys
 
 `t`  -- Terminates current process in CPU
 
-`s`  -- Enters snapshot mode. Enter the prefix of the device type to see a list of processes in devices of that type.
+`s`  -- Enters snapshot mode. Enter the prefix of the device type to see a list of processes in devices of that type. (`p` for printer, `d` for disk drive, `c` for CD drive or `r` for ready queue/CPU)
 
 `p1` -- enter the name of any device in lowercase to simulate the active process in the CPU requesting that device via a system call
 
