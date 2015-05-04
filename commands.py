@@ -32,7 +32,7 @@ class SysCommand(cmd.Cmd):
 		self.all_devices = sys_gen.generate()
 
   		# Set up history parameter alpha & initial bust estimate tau with valid values
- 		print "INITIALIZE CPU SCHEDULING PARAMETERS: "
+ 		print io.sys_mode("Initialize CPU Scheduling Parameters",'-')
 
 		set_alpha = False
 		while not set_alpha:
@@ -48,19 +48,19 @@ class SysCommand(cmd.Cmd):
 
 		self.tau = io.get_valid_int("Initial Burst Estimate")
 
-		print io.ruler()
-
 		# Set up memory size & page size
- 		print "INITIALIZE MEMORY PARAMETERS: "
-		self.total_mem_size = io.get_valid_int("Total Memory Size")
+		print io.sys_mode("Initialize Memory Parameters",'-')
 		self.max_proc_size = io.get_valid_int("Maximum Process Size")
 
-		set_page_size = false
-		while not set_page_size: 
-			# Verify page size is a power of two and a factor of memory size
-			self.page_size = io.get_pow_two("Maximum Process Size")
+		# Get page & mem size. Verify page size is a power of two and a factor of memory size.
+		set_size = False
+		while not set_size: 
+			self.total_mem_size = io.get_valid_int("Total Memory Size")
+			self.page_size = io.get_pow_two("Page Size")
 			if self.total_mem_size % self.page_size == 0: 
-				set_page_size = true
+				set_size = True
+			else: 
+				print io.err("Memory size must be divisible by page size. Please try again.")
 
 
 		# Set up CPU & PID
