@@ -32,7 +32,7 @@ def generate():
 		system_device_types[d] = None
 		system_device_types[d] = io.get_valid_int(d)
 
-	print io.ruler()
+	print io.sys_mode("Initialize Disk Drive",'-')
 
     # List of all individual devices in system
 	system_devices = []
@@ -49,8 +49,6 @@ def generate():
 				system_devices.append(devices.DiskDrive(name,cyl))
 			else:
 				system_devices.append(devices.Device(name, dev_type))
-
-	print io.ruler()
 
 	return system_devices
 	
