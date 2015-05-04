@@ -19,7 +19,7 @@ param_fields = ["file_name","mem_loc","rw","file_len", "cylinder"]
 @total_ordering
 class PCB:
 
-    def __init__(self, id_num, alpha, tau, p_loc="ready"): 
+    def __init__(self, id_num, p_size, alpha, tau, p_loc="ready"): 
         """
         Initialize with new pid & location, empty system call params.
         Calculate next burst based on given history parameter alpha and inital
@@ -27,6 +27,7 @@ class PCB:
         """
         self.pid = id_num
         self.proc_loc = p_loc
+        self._proc_size = p_size
 
         #Set params & burst history
         self.params = dict.fromkeys(param_fields)
@@ -39,6 +40,9 @@ class PCB:
     def set_proc_loc(self, p_loc):
         """ Sets location of process, i.e. which queue/device it is in"""
         self.proc_loc = p_loc
+
+    def get_proc_size(self):
+        return self._proc_size
 
     ## Methods to print out contents/properties of PCB
 
