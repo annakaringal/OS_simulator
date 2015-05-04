@@ -77,13 +77,14 @@ def get_pow_two(prompt, err_msg="Please enter a valid power of two"):
 ## System messages
 
 def command_list():
-	return """    A or a -- Activates a new process
-    T or t -- Terminates active process in the CPU
-    S or s -- Enters snapshot mode.
-              View processes in the queues of devices
-              of a specified type
-    H or h -- Displays list of valid commands.
-    Q or q -- Terminates the program.
+	return """    A or a   -- Activates a new process
+    T or t   -- Terminates active process in the CPU
+    S or s   -- Enters snapshot mode.
+                View processes in the queues of devices
+                of a specified type
+    H or h   -- Displays list of valid commands.
+    Q or q   -- Terminates the program.
+    K# or k# -- Kill Process with pid number '#'.
     
     You can also request a device by its device name: 
            -- lowercase moves a process from the CPU to the device queue
