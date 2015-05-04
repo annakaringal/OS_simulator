@@ -11,7 +11,7 @@
 
 import sys
 from collections import deque
-import msg
+import io
 from queues import FIFOQueue, PriorityQueue
 from pcb import PCB
 
@@ -56,7 +56,7 @@ class Device(FIFOQueue):
 
     def snapshot(self):
         """ Prints all processes in queue to console """
-        print msg.snapshot_header(self._dev_name)
+        print io.snapshot_header(self._dev_name)
         FIFOQueue.snapshot(self)
 
     ## Methods to check/return device name/type
@@ -164,20 +164,20 @@ class DiskDrive(PriorityQueue):
         """
         Prints active processes in disk drive queue, in order they will be processed
         """
-        print msg.snapshot_header(self._dev_name)
+        print io.snapshot_header(self._dev_name)
 
         if self._q1.empty() and self._q2.empty():
             print '{:^78}'.format("EMPTY: No processes in queue")
         else:
             if self._q1.is_frozen():
-                print msg.snapshot_header("PROCESSING [FROZEN]", " ")
+                print io.snapshot_header("PROCESSING [FROZEN]", " ")
                 self._q1.snapshot()
-                print msg.snapshot_header("NEW REQUESTS", " ")
+                print io.snapshot_header("NEW REQUESTS", " ")
                 self._q2.snapshot()
             else:
-                print msg.snapshot_header("PROCESSING [FROZEN]", " ")
+                print io.snapshot_header("PROCESSING [FROZEN]", " ")
                 self._q2.snapshot()
-                print msg.snapshot_header("NEW REQUESTS", " ")
+                print io.snapshot_header("NEW REQUESTS", " ")
                 self._q1.snapshot()
 
 class CPU(PriorityQueue): 
@@ -207,7 +207,7 @@ class CPU(PriorityQueue):
             self.active = proc
         else:
             # Prompt for time since last interrupt
-            elapsed = msg.get_valid_int("Time since last interrupt")
+            elapsed = io.get_valid_int("Time since last interrupt")
 
             # Update burst time for current process
             self.active.update_burst_time(elapsed)
@@ -236,7 +236,7 @@ class CPU(PriorityQueue):
                 self.active.set_proc_loc(self._dev_name)
         else: # Nothing in ready queue
             self.active = None
-            print msg.nothing_in_ready()
+            print io.nothing_in_ready()
 
     def terminate(self):
         """
@@ -286,7 +286,7 @@ class CPU(PriorityQueue):
 
     def snapshot(self):
         """ Prints processes in ready queue, plus active process in CPU with headers """
-        print msg.snapshot_header("ready")
+        print io.snapshot_header("ready")
         PriorityQueue.snapshot(self)
         if self.active: 
             print "\n" + "Active process in CPU: {a!s} (Estimated time remaining: {b!s})".format(a=str(self.active), b=str(self.active.next_est_burst))

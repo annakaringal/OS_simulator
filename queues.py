@@ -16,7 +16,7 @@
 import sys 
 from collections import deque
 import heapq
-import msg
+import io
 from pcb import PCB
 
 class Queue:
@@ -37,7 +37,7 @@ class Queue:
         """
         Get and update burst time for process proc
         """
-        burst = msg.get_valid_int("Time Spent in " + self._dev_name + " since last interrupt")
+        burst = io.get_valid_int("Time Spent in " + self._dev_name + " since last interrupt")
         proc.record_burst_time(burst)
 
     def snapshot(self):
@@ -60,7 +60,7 @@ class Queue:
                 # Parameter field headers
                 self._q[0].headers()
 
-                print msg.ruler()
+                print io.ruler()
                 
                 for p in range(start, end):
                     # Print single process in queue

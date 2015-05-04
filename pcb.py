@@ -12,7 +12,7 @@
 from __future__ import division
 import sys
 from functools import total_ordering
-import msg
+import io
 
 param_fields = ["file_name","mem_loc","rw","file_len", "cylinder"]
 
@@ -190,7 +190,7 @@ class PCB:
         Sets system call params for file name & starting memory location
         """
         self.params["file_name"] = raw_input("File Name >>> ")
-        self.params["mem_loc"] = msg.get_valid_int("Starting Memory Location")
+        self.params["mem_loc"] = io.get_valid_int("Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
         """
@@ -206,11 +206,11 @@ class PCB:
                 elif rw.lower() in ["w", "write"]:
                     self.params["rw"] = "w"
                 else: 
-                    print msg.err("Invalid read/write parameters")
+                    print io.err("Invalid read/write parameters")
                     print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
-            self.params["file_len"] = msg.get_valid_int("File Length")
+            self.params["file_len"] = io.get_valid_int("File Length")
 
     def set_cylinder_params(self, max_num_cylinders):
         """
@@ -220,7 +220,7 @@ class PCB:
         Precondition: Process is in disk drive
         """
         while self.params["cylinder"] == None:
-            cyl = msg.get_valid_int("Cylinder")
+            cyl = io.get_valid_int("Cylinder")
             if cyl > max_num_cylinders: 
                 print "Invalid cylinder number. Please try again."
             else: 
