@@ -4,8 +4,10 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 3, 2015
+# Last Updated: 	May 4, 2015
 # Description:		Generates instances of system devices and queues.
+#					Sets up system based on user input for CPU Scheduling
+#					and memory management parameters.
 #	 				Prompts user for commands in command lineand performs 
 #					actions on system devices, queues and processes 
 #					based on input.
@@ -15,7 +17,7 @@ import sys
 import cmd
 
 import sys_gen
-import msg 
+import io 
 import devices
 import queues
 from pcb import PCB
@@ -28,21 +30,38 @@ class SysCommand(cmd.Cmd):
 
 		## SYS GEN PHASE: Set up queues & devices in system
 		self.all_devices = sys_gen.generate()
- 
- 		# Set up history parameter alpha & initial bust estimate tau with valid values
+
+  		# Set up history parameter alpha & initial bust estimate tau with valid values
+ 		print "INITIALIZE CPU SCHEDULING PARAMETERS: "
+
 		set_alpha = False
 		while not set_alpha:
 			try: 
-				a = float(raw_input("History Parameter >> "))
+				a = float(raw_input("History Parameter >>> "))
 				if a < 0 or a > 1: raise ValueError
 				self.alpha = a
 				set_alpha = True
 			except ValueError: 
-				print msg.err("Please enter a number between 0 and 1")
+				print io.err("Please enter a number between 0 and 1")
 			except OverflowError:
-				print msg.err("Overflow error: Please enter a shorter number")
+				print io.err("Overflow error: Please enter a shorter number")
 
-		self.tau = msg.get_valid_int("Initial Burst Estimate")
+		self.tau = io.get_valid_int("Initial Burst Estimate")
+
+		print io.ruler()
+
+		# Set up memory size & page size
+ 		print "INITIALIZE MEMORY PARAMETERS: "
+		self.total_mem_size = io.get_valid_int("Total Memory Size")
+		self.max_proc_size = io.get_valid_int("Maximum Process Size")
+
+		set_page_size = false
+		while not set_page_size: 
+			# Verify page size is a power of two and a factor of memory size
+			self.page_size = io.get_pow_two("Maximum Process Size")
+			if self.total_mem_size % self.page_size == 0: 
+				set_page_size = true
+
 
 		# Set up CPU & PID
 		self.cpu = devices.CPU()
@@ -54,16 +73,16 @@ class SysCommand(cmd.Cmd):
 		self.avg_cpu_time = 0
 
 		# Print out list of devices to console
-		print msg.sys_mode("System Generation Complete")
+		print io.sys_mode("System Generation Complete")
 		print "Your system is now running with the following devices: "
-		print msg.ruler(38)
+		print io.ruler(38)
 		print "{:<10}{:<28}".format("DEV NAME", "DEV TYPE")
-		print msg.ruler(38)
+		print io.ruler(38)
 		for dev in self.all_devices: 
 			print "{:<10}{:<28}".format(dev.get_dev_name(), dev.get_dev_type())
 
 		## Now in the RUNNING PHASE
-		print msg.sys_mode("System running")
+		print io.sys_mode("System running")
 		print "Input a command to start a process in the system."
 		print "-- Type H or h to view a list of valid commands" + "\n"
 
@@ -107,7 +126,7 @@ class SysCommand(cmd.Cmd):
 			self.print_system_stats()
 
 		except IndexError: 
-			print msg.nothing_in_cpu()
+			print io.nothing_in_cpu()
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
@@ -117,7 +136,7 @@ class SysCommand(cmd.Cmd):
 		"""
 
 		# Request device type from user
-		print msg.sys_mode("Snapshot Mode")
+		print io.sys_mode("Snapshot Mode")
 		print "Enter the first letter of a device type to view the queues of all devices of"
 		print "that type." + "\n"
 		type_to_snapshot = raw_input("Device Type >>> ").lower()
@@ -134,12 +153,12 @@ class SysCommand(cmd.Cmd):
 					dev.snapshot()
 
 		else: 
-			print msg.err("Unknown device type")
+			print io.err("Unknown device type")
 
 		# Print system stats
 		self.print_system_stats()
 
-		print msg.sys_mode("Exiting Snapshot Mode")
+		print io.sys_mode("Exiting Snapshot Mode")
 
 
 	## User Command: Device request or unknown (Invalid) command
@@ -160,19 +179,19 @@ class SysCommand(cmd.Cmd):
 					try: 
 						proc = self.cpu.dequeue()
 					except IndexError: 
-						print msg.nothing_in_cpu()
+						print io.nothing_in_cpu()
 						break
 
 					# Prompt user for and set PCB params 
 
-					print msg.sys_mode("Set system call parameters")
+					print io.sys_mode("Set system call parameters")
 					proc.set_syst_call_params()
 					proc.set_read_write_params(dev.get_dev_type())
 
 					if (dev.get_dev_type().lower() == "disk drive"):
 						proc.set_cylinder_params(dev.get_num_cylinders())
 
-					print msg.sys_mode("System call parameters set")
+					print io.sys_mode("System call parameters set")
 
 					# Add process to back of device queue
 					dev.enqueue(proc)
@@ -185,21 +204,21 @@ class SysCommand(cmd.Cmd):
 						print "%s completed %s" %(dev, proc)
 						self.cpu.enqueue(proc)
 					except IndexError:
-						print msg.err("{!s} queue is empty".format(dev))		
+						print io.err("{!s} queue is empty".format(dev))		
 
 		if not device_found: 
-			print msg.invalid_command()
+			print io.invalid_command()
 
 	## User Command: Display Help
 	def do_h(self, args): 
 		""" Displays the list of valid command line inputs to user """
-		print msg.sys_mode("Help - Commands")
-		print msg.command_list()
+		print io.sys_mode("Help - Commands")
+		print io.command_list()
 
 	## User Command: Unknown input (special cases)
 	def emptyline(self):
 		""" If empty line is entered, returns invalid input error """
-		print msg.invalid_command()
+		print io.invalid_command()
 
 	def precmd(self, line):
 		""" If > 1 argument entered, returns invalid input error """
