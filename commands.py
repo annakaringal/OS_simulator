@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 4, 2015
+# Last Updated: 	May 6, 2015
 # Description:		Generates instances of system devices and queues.
 #					Sets up system based on user input for CPU Scheduling
 #					and memory management parameters.
@@ -21,6 +21,7 @@ import io
 import devices
 import queues
 from pcb import PCB
+from memory import Memory
 
 class SysCommand(cmd.Cmd):
 
@@ -50,7 +51,6 @@ class SysCommand(cmd.Cmd):
 
 		# Set up memory size & page size
 		print io.sys_mode("Initialize Memory Parameters",'-')
-		self.max_proc_size = io.get_valid_int("Maximum Process Size")
 
 		# Get page & mem size. Verify page size is a power of two and a factor of memory size.
 		set_size = False
@@ -62,6 +62,17 @@ class SysCommand(cmd.Cmd):
 			else: 
 				print io.err("Memory size must be divisible by page size. Please try again.")
 
+		# Get & verify maximum process size
+		set_proc_size = False
+		while not set_proc_size: 
+			self.max_proc_size = io.get_valid_int("Maximum Process Size")
+			if self.max_proc_size <= self.total_mem_size: 
+				set_proc_size = True
+			else: 
+				print io.err("Maximum process size cannot be larger than total memory. Please try again.")
+
+
+		self.mem = Memory(total_mem_size, page_size)
 
 		# Set up CPU & PID
 		self.cpu = devices.CPU()
@@ -91,13 +102,29 @@ class SysCommand(cmd.Cmd):
 	def do_a(self, args):
 		"""
 		User input: A
-		Activates a new process
+		Get and validate process size. If process is larger than total memory or max process size, 
+		reject process. Else, create a new process. If enough memory, add to ready queue, else 
+		go to job pool. 
 		"""
-		self.pid_count += 1
-		new_proc = PCB(self.pid_count, self.alpha, self.tau)
 
-		# Send process to CPU or ready queue based on what's in CPU
-		self.cpu.enqueue(new_proc)
+		psize = io.get_valid_int("Process size")
+		if psize > total_mem_size: 
+			print io.err.("Proccess cannot be larger than total memory " + str(total_mem_size))
+		elif psize > max_proc_size: 
+			print io.err.("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
+		else: 
+			self.pid_count += 1
+			new_proc = PCB(self.pid_count, psize, self.alpha, self.tau)
+
+			# Enough memory for process
+			if psize <= self.free_mem: 
+				# Send process to CPU or ready queue based on what's in CPU
+				self.cpu.enqueue(new_proc)
+				self.free_mem -= psize
+			else:
+				# Not enough memory to run process. Go to job pool.
+				self.job_pool.enqueue(new_proc)
+
 
 	## User Command: Terminate Process
 	def do_t(self, args):
