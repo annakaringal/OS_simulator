@@ -140,9 +140,8 @@ class PCB:
             return self.params["cylinder"] < other.params["cylinder"]
 
         # If process is in job pool, compare using process size
-        # Also needs to be a max heap,return true if greater than
         elif self.proc_loc.lower()[0] is "j":
-            return self.proc_size > other.proc_size
+            return self.proc_size < other.proc_size
 
         # All other locations, compare using PID
         else:
