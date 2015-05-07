@@ -9,6 +9,8 @@
 
 import sys 
 from collections import deque
+from math import ceil
+from bisect import insort
 import heapq
 import io
 from pcb import PCB
@@ -25,28 +27,46 @@ class LongTermScheduler:
 			self.ram.allocate(proc)
 			return True
 
-		except InsufficientMemory:
+		except InsufficientMemory
+		:
 			self.job_pool.enqueue(proc)
 			return False
 
 	def kill(self, proc):
+
+		"""
+		Look for given process in memory or job pool and terminates process.
+		If process was in memory, allocates any freed memory to largest job
+		in job pool, until no more freed memory can be allocated. Returns list
+		of new processes allocated
+		Else, if process was in job pool, removes from job pool, terminates
+		process and 
+		"""
 		if ram.is_in_mem(proc):
 			# Deallocate process
 			ram.deallocate(proc)
 
 			# Try to allocate any processes in job queue
+			procs = []
 			while ram.free_mem: 
 				try: 
-					ram.allocate(ob_pool.dequeue(ram.free_mem))
+					procs.append(job_pool.dequeue(ram.free_mem))
+					ram.allocate(procs[-1])
 				except: 
 					# Either no more jobs or not enough free mem to allocate
 					# any processes in queue
 					break
 
+			return procs
+
 		else:
 			# Not in memory, try the job pool
+			# Return no processes, because no new processes were allocated mto
+			# free memory
 			try: 
-				job_pool.dequeue(proc)
+				p = job_pool.dequeue(proc)
+				del p
+				return None
 			except: 
 				print io.error("Process could not be found")
 
@@ -78,11 +98,11 @@ class Memory:
 		assigns pages to frames in frame table and updates free frame list. 
 		"""
 		if proc.proc_size > self.free_mem():
-			raise InsufficientMemory
+			raise InsufficientMemory(proc)
 			
 		# For every page needed for process, insert into first free frame from
 		# free frames list and update free frames list
-		for p in range(ceil(proc.proc_size / self._page_size)):
+		for p in range(int(ceil(proc.proc_size / self._page_size))):
 			self._frame_table[self._free_frames.popleft()] = proc.pid
 
 
@@ -109,10 +129,13 @@ class JobPool(Queue):
     def enqueue(self, proc): 
     	""" Add process to job pool, maintaining sorted order """
         proc.set_proc_loc(self._dev_name)
-        self._q.insort(proc)
+        insort(self._q, proc)
 
     def dequeue(self, free_mem):
-        """ Dequeue and return largest job in job pool that will fit """
+        """
+        Dequeue and return largest job in job pool that will fit in given 
+        memory.
+        """
         # Nothing to dequeue
         if not self._q: 
         	raise IndexError
@@ -124,17 +147,17 @@ class JobPool(Queue):
         		return p
 
         # No process in queue will fit in given memory
-        raise InvalidProcess
+        raise InvalidProcess()
 
 
     def dequeue(self, proc):
-    	""" Remove given process from job pool """
+    	""" Dequeue and return given process from job pool """
         # Nothing to dequeue
         if not self._q: 
         	raise IndexError
 
     	if (lambda x: x.pid == proc.pid) in self._q: 
-    		self._q.remove(lambda x: x.pid == proc.pid)
+    		return self._q.pop(lambda x: x.pid == proc.pid)
     	else: 
 	        # Process not in queue
 	        raise InvalidProcess
@@ -153,7 +176,7 @@ class InvalidProcess(Exception):
     """
     Exception raised when requested process does not exist
     """
-    def __init__(self,value):
+    def __init__(self, value="Process does not exist"):
         self.value = value
     def __str__(self):
         return repr(self.value)
