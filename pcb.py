@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 3, 2015
+# Last Updated:     May 7, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -27,7 +27,7 @@ class PCB:
         """
         self.pid = id_num
         self.proc_loc = p_loc
-        self._proc_size = p_size
+        self.proc_size = p_size
 
         #Set params & burst history
         self.params = dict.fromkeys(param_fields)
@@ -42,7 +42,7 @@ class PCB:
         self.proc_loc = p_loc
 
     def get_proc_size(self):
-        return self._proc_size
+        return self.proc_size
 
     ## Methods to print out contents/properties of PCB
 
@@ -110,10 +110,16 @@ class PCB:
         # If process is in ready queue or CPU, compare using next est burst
         if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower() == "cpu":
             return self.next_est_burst == other.next_est_burst
+
         # If process is in disk drive, compare using cylinder number
-        elif (self.proc_loc.lower()[0] == "d"):
-        # All other locations, compare using PID
+        elif self.proc_loc.lower()[0] is "d":
             return self.params["cylinder"] == other.params["cylinder"]
+
+        # If process is in job pool, compare using process size
+        elif self.proc_loc.lower()[0] is "j":
+            return self.proc_size == other.proc_size
+
+        # All other locations, compare using PID
         else:
             return self.pid == other.pid
 
@@ -128,9 +134,16 @@ class PCB:
         # If process is in ready queue or CPU, compare using next est burst
         if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower() == "cpu":
             return self.next_est_burst < other.next_est_burst
+        
         # If process is in disk drive, compare using cylinder number
-        elif self.proc_loc.lower()[0]== "d":
+        elif self.proc_loc.lower()[0] is "d":
             return self.params["cylinder"] < other.params["cylinder"]
+
+        # If process is in job pool, compare using process size
+        # Also needs to be a max heap,return true if greater than
+        elif self.proc_loc.lower()[0] is "j":
+            return self.proc_size > other.proc_size
+
         # All other locations, compare using PID
         else:
             return self.pid < other.pid
