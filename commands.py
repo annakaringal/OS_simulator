@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 6, 2015
+# Last Updated: 	May 7, 2015
 # Description:		Generates instances of system devices and queues.
 #					Sets up system based on user input for CPU Scheduling
 #					and memory management parameters.
@@ -21,7 +21,7 @@ import io
 import devices
 import queues
 from pcb import PCB
-from memory import Memory
+from memory import LongTermScheduler
 
 class SysCommand(cmd.Cmd):
 
@@ -71,8 +71,8 @@ class SysCommand(cmd.Cmd):
 			else: 
 				print io.err("Maximum process size cannot be larger than total memory. Please try again.")
 
-
-		self.ram = Memory(total_mem_size, page_size)
+		# Set up long term scheduler. This will also set up RAM & job pool
+		self.lts = LongTermScheduler(self.total_mem_size, self.page_size)
 
 		# Set up CPU & PID
 		self.cpu = devices.CPU()
@@ -108,14 +108,18 @@ class SysCommand(cmd.Cmd):
 		"""
 
 		psize = io.get_valid_int("Process size")
-		if psize > total_mem_size: 
+		if psize > self.total_mem_size: 
 			print io.err("Proccess cannot be larger than total memory")
-		elif psize > max_proc_size: 
-			print io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
+		elif psize > self.max_proc_size: 
+			print self.io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
 		else: 
+			# Create new process
 			self.pid_count += 1
 			new_proc = PCB(self.pid_count, psize, self.alpha, self.tau)
 
+			# If enough memory, new process can run, else goes to job pool
+			if self.lts.schedule(new_proc): 
+				self.cpu.enqueue(new_proc)
 
 	## User Command: Terminate Process
 	def do_t(self, args):
@@ -129,8 +133,17 @@ class SysCommand(cmd.Cmd):
 		try:
 			proc = self.cpu.get_active_process()
 
-			#Terminate current process
+			# Deallocate memory with long term scheduler
+			# This will also allocate any freed memory to anything in job pool
+			# and return a list of processes that it has allocated memory too
+			new_procs = self.lts.kill(proc)
+
+			# Terminate current process
 			self.cpu.terminate()
+
+			# Enqueue all new processes to ready queue
+			for p in new_procs: 
+				self.cpu.enqueue(p)
 
 			# Update system stats with total CPU time for terminated process
 			self.total_cpu_time += proc.tot_burst_time()
@@ -162,6 +175,10 @@ class SysCommand(cmd.Cmd):
 		# Show active process in CPU & processes in ready queue 
 		if type_to_snapshot == "r": 
 			self.cpu.snapshot()
+
+		# Show what's in memory
+		elif type_to_snapshot == "m": 
+			pass
 
 		# Show processes in device 
 		elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
