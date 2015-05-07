@@ -60,7 +60,7 @@ class SysCommand(cmd.Cmd):
 			if self.total_mem_size % self.page_size == 0: 
 				set_size = True
 			else: 
-				print io.err("Memory size must be divisible by page size. Please try again.")
+				print io.err("Memory size must be divisible by page size")
 
 		# Get & verify maximum process size
 		set_proc_size = False
@@ -72,7 +72,7 @@ class SysCommand(cmd.Cmd):
 				print io.err("Maximum process size cannot be larger than total memory. Please try again.")
 
 
-		self.mem = Memory(total_mem_size, page_size)
+		self.ram = Memory(total_mem_size, page_size)
 
 		# Set up CPU & PID
 		self.cpu = devices.CPU()
@@ -109,21 +109,12 @@ class SysCommand(cmd.Cmd):
 
 		psize = io.get_valid_int("Process size")
 		if psize > total_mem_size: 
-			print io.err.("Proccess cannot be larger than total memory " + str(total_mem_size))
+			print io.err("Proccess cannot be larger than total memory")
 		elif psize > max_proc_size: 
-			print io.err.("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
+			print io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
 		else: 
 			self.pid_count += 1
 			new_proc = PCB(self.pid_count, psize, self.alpha, self.tau)
-
-			# Enough memory for process
-			if psize <= self.free_mem: 
-				# Send process to CPU or ready queue based on what's in CPU
-				self.cpu.enqueue(new_proc)
-				self.free_mem -= psize
-			else:
-				# Not enough memory to run process. Go to job pool.
-				self.job_pool.enqueue(new_proc)
 
 
 	## User Command: Terminate Process
