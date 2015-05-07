@@ -12,6 +12,7 @@ from collections import deque
 import heapq
 import io
 from pcb import PCB
+from queues import Queue
 
 class LongTermScheduler:
 
@@ -29,10 +30,25 @@ class LongTermScheduler:
 			return False
 
 	def kill(self, proc):
-		true: 
-			self.ram.deallocate(proc)
-			if 
+		if ram.is_in_mem(proc):
+			# Deallocate process
+			ram.deallocate(proc)
 
+			# Try to allocate any processes in job queue
+			while ram.free_mem: 
+				try: 
+					ram.allocate(ob_pool.dequeue(ram.free_mem))
+				except: 
+					# Either no more jobs or not enough free mem to allocate
+					# any processes in queue
+					break
+
+		else:
+			# Not in memory, try the job pool
+			try: 
+				job_pool.dequeue(proc)
+			except: 
+				print io.error("Process could not be found")
 
 
 class Memory: 
@@ -49,13 +65,19 @@ class Memory:
 	def free_mem(self):
 		return len(self._free_frames) * self._page_size
 
+	def page_size(self): 
+		return self._page_size
+
+	def is_in_mem(self, proc):
+		return proc.pid in dict.values()
+
 	def allocate(self, proc):
 		"""
 		Allocates memory to a process if there is enough free memory (else
 		throws exception). If enough memory, breaks process up into pages,
 		assigns pages to frames in frame table and updates free frame list. 
 		"""
-		if proc.proc_size > self.free_mem(): 
+		if proc.proc_size > self.free_mem():
 			raise InsufficientMemory
 			
 		# For every page needed for process, insert into first free frame from
@@ -63,13 +85,14 @@ class Memory:
 		for p in range(ceil(proc.proc_size / self._page_size)):
 			self._frame_table[self._free_frames.popleft()] = proc.pid
 
+
 	def deallocate(self, proc):
 		"""
 		Deallocates framesin mem for a given process and updates frame table & 
 		free frames list. If process not in memory, throws exception. 
 		"""
 
-		if not proc.pid in dict.values()
+		if not proc.pid in dict.values():
 			raise InvalidProcess
 
 		for k,v in self._frame_table.iteritems(): 
@@ -89,28 +112,36 @@ class JobPool(Queue):
         self._q.insort(proc)
 
     def dequeue(self, free_mem):
-        """ Dequeue largest job in job pool that will fit """
+        """ Dequeue and return largest job in job pool that will fit """
         # Nothing to dequeue
         if not self._q: 
         	raise IndexError
 
         # Traverse list from largest first
-        # Return process that is the largest that will fit in given mem
+        # Return process that is the largest that will fit in given memory
         for p in reversed(self._q):
-        	if p.proc_size <= free_mem
+        	if p.proc_size <= free_mem:
         		return p
 
-        # Process not in queue
+        # No process in queue will fit in given memory
         raise InvalidProcess
 
 
     def dequeue(self, proc):
     	""" Remove given process from job pool """
-    	return proc 
+        # Nothing to dequeue
+        if not self._q: 
+        	raise IndexError
+
+    	if (lambda x: x.pid == proc.pid) in self._q: 
+    		self._q.remove(lambda x: x.pid == proc.pid)
+    	else: 
+	        # Process not in queue
+	        raise InvalidProcess
 
 class InsufficientMemory(Exception):
     """
-    Exception raised for trying to enqueue while there is not enough free memory
+    Exception raised for trying to enqueue while there is not enough free mem
     """
     def __init__(self,value):
         self.value = value
