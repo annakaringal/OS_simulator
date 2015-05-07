@@ -27,8 +27,7 @@ class LongTermScheduler:
 			self.ram.allocate(proc)
 			return True
 
-		except InsufficientMemory
-		:
+		except InsufficientMemory:
 			self.job_pool.enqueue(proc)
 			return False
 
@@ -42,16 +41,16 @@ class LongTermScheduler:
 		Else, if process was in job pool, removes from job pool, terminates
 		process and 
 		"""
-		if ram.is_in_mem(proc):
+		if self.ram.is_in_mem(proc):
 			# Deallocate process
-			ram.deallocate(proc)
+			self.ram.deallocate(proc)
 
 			# Try to allocate any processes in job queue
 			procs = []
-			while ram.free_mem: 
+			while self.ram.free_mem: 
 				try: 
-					procs.append(job_pool.dequeue(ram.free_mem))
-					ram.allocate(procs[-1])
+					procs.append(self.job_pool.dequeue(ram.free_mem))
+					self.ram.allocate(procs[-1])
 				except: 
 					# Either no more jobs or not enough free mem to allocate
 					# any processes in queue
@@ -64,7 +63,7 @@ class LongTermScheduler:
 			# Return no processes, because no new processes were allocated mto
 			# free memory
 			try: 
-				p = job_pool.dequeue(proc)
+				p = self.job_pool.dequeue(proc)
 				del p
 				return None
 			except: 
@@ -89,7 +88,7 @@ class Memory:
 		return self._page_size
 
 	def is_in_mem(self, proc):
-		return proc.pid in dict.values()
+		return proc.pid in self._frame_table.values()
 
 	def allocate(self, proc):
 		"""
@@ -112,13 +111,13 @@ class Memory:
 		free frames list. If process not in memory, throws exception. 
 		"""
 
-		if not proc.pid in dict.values():
+		if not proc.pid in self._frame_table.values():
 			raise InvalidProcess
 
 		for k,v in self._frame_table.iteritems(): 
 			if v is proc.pid: 
 				self._frame_table[k] = None
-				self.free_frames.append(k)
+				self._free_frames.append(k)
 
 class JobPool(Queue):
 
@@ -130,6 +129,7 @@ class JobPool(Queue):
     	""" Add process to job pool, maintaining sorted order """
         proc.set_proc_loc(self._dev_name)
         insort(self._q, proc)
+        print proc.status()
 
     def dequeue(self, free_mem):
         """
