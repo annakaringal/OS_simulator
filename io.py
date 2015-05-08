@@ -22,7 +22,7 @@ def sys_mode(mode_name, char='#', len=screen_width):
 
 def snapshot_header(q_name, char = "=", len=screen_width):
 	""" Prints name of queue displayed as a header """
-	return "\n" + "{:{c}^{l}}".format(" " + q_name.upper() + " QUEUE ", c=char, l=len)
+	return "\n" + "{:{c}^{l}}".format(" " + q_name.upper(), c=char, l=len)
 
 ## Error messages
 
