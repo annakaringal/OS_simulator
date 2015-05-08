@@ -179,7 +179,7 @@ class SysCommand(cmd.Cmd):
 
 		# Show what's in memory
 		elif type_to_snapshot == "m": 
-			pass
+			self.lts.snapshot()
 
 		# Show processes in device 
 		elif type_to_snapshot in [d.get_dev_type()[0].lower() for d in self.all_devices]:
