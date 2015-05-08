@@ -69,7 +69,7 @@ class SysCommand(cmd.Cmd):
 			if self.max_proc_size <= self.total_mem_size: 
 				set_proc_size = True
 			else: 
-				print io.err("Maximum process size cannot be larger than total memory. Please try again.")
+				print io.err("Maximum process size cannot be larger than total memory")
 
 		# Set up long term scheduler. This will also set up RAM & job pool
 		self.lts = LongTermScheduler(self.total_mem_size, self.page_size)
@@ -111,7 +111,7 @@ class SysCommand(cmd.Cmd):
 		if psize > self.total_mem_size: 
 			print io.err("Proccess cannot be larger than total memory")
 		elif psize > self.max_proc_size: 
-			print self.io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
+			print io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
 		else: 
 			# Create new process
 			self.pid_count += 1
