@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             memory.py
 # Created:          May 4, 2015
-# Last Updated:     May 7, 2015
+# Last Updated:     May 8, 2015
 # Description:      Classes for long term scheduling and memory management
 
 import sys 
@@ -134,8 +134,13 @@ class Memory:
             print " 0x{:<10}{:<10}".format(frame, proc if proc else "None")
 
         print io.snapshot_header("Free Frames")
+        n = 0
         for f in self._free_frames:
-            print "0x{:<10}".format(f),
+            n += 1
+            if (n%6) is 0: # Print 6 frames per row
+                print "0x{:<10}".format(f)
+            else:    
+                print "0x{:<10}".format(f),
 
 class JobPool(Queue):
 
