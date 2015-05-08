@@ -72,6 +72,9 @@ class LongTermScheduler:
     def show_job_pool(self):
         self.job_pool.snapshot()
 
+    def snapshot(self):
+        self.ram.snapshot()
+
 
 class Memory: 
 
@@ -123,11 +126,16 @@ class Memory:
                 self._free_frames.append(k)
 
     def snapshot(self):
-        print "{:^5}{:^5}".format("FRAME", "PAGE")
-        for frame, page in self._frame_table: 
-            print "{{f!s}:^5}{{p!s}:^5}".format(f = frame, p = page)
+        #TODO: Also print corresponding page
+        print io.snapshot_header("Frame Table")
+        print "{:^10}{:^10}".format("FRAME", "PROCESS PID")
+        print io.ruler()
+        for frame, proc in self._frame_table.iteritems():
+            print " 0x{:<10}{:<10}".format(frame, proc if proc else "None")
 
-        #TODO: print free frames tables
+        print io.snapshot_header("Free Frames")
+        for f in self._free_frames:
+            print "0x{:<10}".format(f),
 
 class JobPool(Queue):
 
@@ -173,9 +181,12 @@ class JobPool(Queue):
             raise InvalidProcess
 
     def snapshot(self):
-        print "JOB POOL: ",
-        for p in self._q: 
-            print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] ",
+        if self._q:
+            print "JOB POOL: ",
+            for p in self._q: 
+                print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] ",
+        else: 
+            print "Job pool is empty"
 
 class InsufficientMemory(Exception):
     """
