@@ -54,10 +54,10 @@ class PCB:
 
     def status(self):
         """ Prints which queue/device process is currently in """
-        if not self.proc_loc.lower()== "cpu" or not self.proc_loc.lower() == "job pool":
-            return "{a!s} is in {q!s} Queue".format(a = str(self).capitalize(), q = self.proc_loc.capitalize())
-        else: 
+        if self.proc_loc.lower()== "cpu" or self.proc_loc.lower() == "job pool":
             return "{a!s} is in {q!s}".format(a = str(self).capitalize(), q = self.proc_loc.upper())
+        else: 
+            return "{a!s} is in {q!s} Queue".format(a = str(self).capitalize(), q = self.proc_loc.upper())
 
     def snapshot(self):
         """
