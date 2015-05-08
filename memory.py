@@ -7,6 +7,7 @@
 # Last Updated:     May 8, 2015
 # Description:      Classes for long term scheduling and memory management
 
+from __future__ import division
 import sys 
 from collections import deque
 from math import ceil
@@ -81,7 +82,7 @@ class Memory:
     def __init__(self, s, p):
         self._size = s
         self._page_size = p
-        self._num_of_pages = s/p
+        self._num_of_pages = int(s/p)
 
         # Create empty frame table & free frame list containing all frames
         self._frame_table = dict.fromkeys(range(self._num_of_pages))
@@ -106,7 +107,7 @@ class Memory:
             raise InsufficientMemory(proc)
             
         # For every page needed for process, insert into first free frame from
-        # free frames list and update free frames list
+        # free frames list and update free frames list\
         for p in range(int(ceil(proc.proc_size / self._page_size))):
             self._frame_table[self._free_frames.popleft()] = proc.pid
 
@@ -128,7 +129,7 @@ class Memory:
     def snapshot(self):
         #TODO: Also print corresponding page
         print io.snapshot_header("Frame Table")
-        print "{:^10}{:^10}".format("FRAME", "PROCESS PID")
+        print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
         for frame, proc in self._frame_table.iteritems():
             print " 0x{:<10}{:<10}".format(frame, proc if proc else "None")
