@@ -111,7 +111,7 @@ class SysCommand(cmd.Cmd):
 		if psize > self.total_mem_size: 
 			print io.err("Proccess cannot be larger than total memory")
 		elif psize > self.max_proc_size: 
-			print io.err("Proccess cannot be larger than maximum process size of " + str(max_proc_size))
+			print io.err("Proccess cannot be larger than maximum process size of " + str(self.max_proc_size))
 		else: 
 			# Create new process
 			self.pid_count += 1
@@ -175,6 +175,7 @@ class SysCommand(cmd.Cmd):
 		# Show active process in CPU & processes in ready queue 
 		if type_to_snapshot == "r": 
 			self.cpu.snapshot()
+			self.lts.show_job_pool()
 
 		# Show what's in memory
 		elif type_to_snapshot == "m": 
