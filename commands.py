@@ -162,13 +162,12 @@ class SysCommand(cmd.Cmd):
 	def kill(self, pid): 
 		try:
 			# Check to see if positive whole number
-			print "checking"
 			pid = int(pid)
-			if pid <= 0: raise ValueError
+			if not isinstance(pid, (int, long)) or pid <= 0: raise ValueError
 
 			# Deallocate memory for process and reallocate memory
 			new_procs = self.lts.terminate(pid)
-			for p in new_procs: 
+			for p in new_procs:
 				self.cpu.enqueue(p)
 
 			# Look for process in devices and terminate when found
