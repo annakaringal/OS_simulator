@@ -154,6 +154,14 @@ class DiskDrive(PriorityQueue):
         proc.clear_params()
         return proc
 
+    def terminate(self, pid):
+        if self._q1.contains(pid): 
+            self._q1.terminate(pid)
+        elif self._q2.contains(pid):
+            self._q2.terminate(pid)
+        else:
+            raise IndexError
+
      ## Methods to print device in human readable form to console
 
     def __repr__(self):
@@ -261,14 +269,10 @@ class CPU(PriorityQueue):
             # given pid
             if not pid or self.active.pid == pid: 
                 proc = self.active 
-                print str(pid) + "is active process.. terminating"
                 self.ready_to_CPU()
 
             else: # Look for process in ready queue and remove
-                if not PriorityQueue.empty(self):
-                    proc = PriorityQueue.pop(self, pid)
-                else: 
-                    raise IndexError
+                proc = PriorityQueue.pop(self, pid)
 
             self.record_burst(proc)
 
@@ -280,6 +284,7 @@ class CPU(PriorityQueue):
 
         else: 
             raise IndexError
+                
 
     def dequeue(self):
         """
