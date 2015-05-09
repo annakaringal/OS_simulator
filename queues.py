@@ -23,6 +23,7 @@ class Queue:
 
     def __init__(self):
         self._q = None
+        self._dev_name = None
 
     def empty(self):
         return True if not self._q else False
@@ -35,14 +36,33 @@ class Queue:
     def contains(self, pid):
         return any(p.pid == pid for p in self._q)
 
-    ## Methods to set PCB attributes
+    ## Set PCB attributes
     def record_burst(self, proc):
         """
         Get and update burst time for process proc
         """
-        burst = io.get_valid_int("Time Spent in " + self._dev_name + " since last interrupt")
+        burst = io.get_valid_int("Time since last interrupt")
         proc.record_burst_time(burst)
 
+    ## Terminate a given process
+
+    def terminate(self, pid): 
+        """
+        Remove and delete task with given id 
+        """
+        if self._q: 
+            proc = self.pop(pid)
+        else: 
+            raise IndexError
+
+        # Print stats
+        print "\n" + "{:-^78}".format(" Terminated Process Report ")
+        print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(proc.pid, proc.avg_burst_time(), proc.tot_burst_time()).center(78," ")
+        
+        del proc
+
+
+    ## View what's in the queue
     def snapshot(self):
         """
         Prints a paginated view of processes & process parameters in 
@@ -103,6 +123,15 @@ class FIFOQueue(Queue):
         else: 
             return head
 
+    def pop(self,pid):
+        """
+        Remove and return task with given pid
+        """
+        for p in self._q:
+            if p.pid == pid:
+                proc = p 
+                self._q.remove(p)
+                return proc
 
 class PriorityQueue(Queue):
 
