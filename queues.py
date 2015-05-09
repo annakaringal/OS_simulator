@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             queues.py
 # Created:          February 27, 2015
-# Last Updated:     May 2, 2015
+# Last Updated:     May 9, 2015
 # Description:      Classes for different types of queues in the system.
 #                       - FIFO Queue implemented with deque
 #                       - Priority Queue implemented with min heap
@@ -31,6 +31,9 @@ class Queue:
         """ Returns length of queue """
         return len(self._q)
 
+    ## Returns true if queue contains a process with given PID
+    def contains(self, pid):
+        return any(p.pid == pid for p in self._q)
 
     ## Methods to set PCB attributes
     def record_burst(self, proc):
@@ -110,7 +113,7 @@ class PriorityQueue(Queue):
         self._q = []
         self._frozen = f
 
-    # Methods to freeze/unfreeze queue
+    ## Methods to freeze/unfreeze queue
     def is_frozen(self):
         return self._frozen
 
@@ -120,7 +123,7 @@ class PriorityQueue(Queue):
     def unfreeze(self):
         self._frozen = False
 
-    # Enqueue/Dequeue methods
+    ## Enqueue/Dequeue methods
     def enqueue(self, proc):
         """
         Add to heap maintaining heap order property. Only add to heap if queue
@@ -137,7 +140,7 @@ class PriorityQueue(Queue):
         """
         return heapq.heappop(self._q)
 
-    # Methods to see what's in the queue
+    ## Methods to see what's in the queue
     def snapshot(self):
         """
         Prints a paginated view of processes & process parameters in 

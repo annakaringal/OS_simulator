@@ -106,6 +106,9 @@ class DiskDrive(PriorityQueue):
     def get_dev_type(self):
         return self._dev_type
 
+    def contains(self,pid):
+        return (self._q1.contains(pid) or self._q2.contains(pid))
+
     ## Scheduling methods
 
     def enqueue(self, proc):
