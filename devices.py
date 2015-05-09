@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     May 2, 2015
+# Last Updated:     May 9, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
@@ -197,6 +197,12 @@ class CPU(PriorityQueue):
     def empty(self):
         return True if self.active else False
 
+    def contains(self, pid): 
+        if pid == self.active.pid: 
+            return True
+        else: 
+            return PriorityQueue.contains(self,pid)
+
     ## Methods to modify active process in CPU
 
     def enqueue(self,proc):
@@ -241,18 +247,29 @@ class CPU(PriorityQueue):
             self.active = None
             print io.nothing_in_ready()
 
-    def terminate(self):
+    def terminate(self, pid = None):
         """
-        Terminates active process in CPU, deallocates memory used by process.
-        Moves next process in Ready Queue to CPU.
+        If no pid given, terminates active process in CPU. Else, terminates 
+        process with given pid. 
+        If active process is terminated, moves head of Ready Queue to CPU.
+        Precondition: pid is a valid PID for a process in the ready queue or CPU
         """
+        proc = None
         if self.active: 
-            # Terminate active process and replace from ready queue
-            print "{a!s} terminated".format(a = str(self.active).capitalize())
-            proc = self.active
-            self.ready_to_CPU()
 
-            # Get & update burst time
+            # Terminate active process if no pid given or if active process has
+            # given pid
+            if not pid or self.active.pid == pid: 
+                proc = self.active 
+                print str(pid) + "is active process.. terminating"
+                self.ready_to_CPU()
+
+            else: # Look for process in ready queue and remove
+                if not PriorityQueue.empty(self):
+                    proc = PriorityQueue.pop(self, pid)
+                else: 
+                    raise IndexError
+
             self.record_burst(proc)
 
             # Print stats
@@ -261,8 +278,8 @@ class CPU(PriorityQueue):
             
             del proc
 
-        else: # Nothing to dequeue
-            raise IndexError 
+        else: 
+            raise IndexError
 
     def dequeue(self):
         """
