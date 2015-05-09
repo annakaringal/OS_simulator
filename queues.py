@@ -140,6 +140,14 @@ class PriorityQueue(Queue):
         """
         return heapq.heappop(self._q)
 
+    def pop(self,pid):
+        """
+        Remove and return task with given pid
+        """
+        for p in self._q:
+            if p.pid == pid:
+                return self._q.pop(self._q.index(p))
+
     ## Methods to see what's in the queue
     def snapshot(self):
         """
