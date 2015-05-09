@@ -53,10 +53,11 @@ class LongTermScheduler:
                 try:
                     procs.append(self.job_pool.dequeue_largest(self.ram.free_mem()))
                     self.ram.allocate(procs[-1])
-                except (InsufficientMemory, InvalidProcess): 
+                except (InsufficientMemory, InvalidProcess, IndexError): 
                     # Either no more jobs or not enough free mem to allocate
                     # any processes in queue
                     break
+
 
             return procs
 
@@ -69,7 +70,7 @@ class LongTermScheduler:
                 del p
                 return None
             except: 
-                print io.error("Process could not be found")
+                raise InvalidProcess(str(pid))
 
     def kill(self, proc):
         pass
@@ -169,13 +170,13 @@ class JobPool(Queue):
             raise IndexError
 
         # Traverse list from largest first
-        # Return process that is the largest that will fit in given memory
+        # Pop & return process that is the largest that will fit in given memory
         for p in reversed(self._q):
             if p.proc_size <= free_mem:
-                return p
+                return self._q.pop(self._q.index(p))
 
         # No process in queue will fit in given memory
-        raise InvalidProcess()
+        raise InvalidProcess
 
     def dequeue(self, pid):
         """ Dequeue and return given process from job pool """
@@ -205,7 +206,6 @@ class InsufficientMemory(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-
 
 class InvalidProcess(Exception):
     """
