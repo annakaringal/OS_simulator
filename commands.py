@@ -159,6 +159,9 @@ class SysCommand(cmd.Cmd):
 		except IndexError: 
 			print io.nothing_in_cpu()
 
+	def kill(self, pid): 
+		pass
+
 	## User Command: Queue Snapshot
 	def do_s(self, args):
 		"""
@@ -200,9 +203,14 @@ class SysCommand(cmd.Cmd):
 	## User Command: Device request or unknown (Invalid) command
 	def default(self, args):
 		"""
-		Default response to user input: Requesting a device or invalid command
+		Default response to user input:
+		Requesting a device, killing a process or invalid command
 		"""
+		# User command: KILL. 
+		if self.lastcmd.lower()[0] is "k": 
+			return self.kill(self.lastcmd.lower()[1:]) 
 
+		# User requests or ends a device
 		device_found = False 
 
 		for dev in self.all_devices:
