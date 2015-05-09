@@ -142,8 +142,9 @@ class SysCommand(cmd.Cmd):
 			self.cpu.terminate()
 
 			# Enqueue all new processes to ready queue
-			for p in new_procs: 
-				self.cpu.enqueue(p)
+			if new_procs: 
+				for p in new_procs: 
+					self.cpu.enqueue(p)
 
 			# Update system stats with total CPU time for terminated process
 			self.total_cpu_time += proc.tot_burst_time()
@@ -167,8 +168,9 @@ class SysCommand(cmd.Cmd):
 
 			# Deallocate memory for process and reallocate memory
 			new_procs = self.lts.terminate(pid)
-			for p in new_procs:
-				self.cpu.enqueue(p)
+			if new_procs: 
+				for p in new_procs: 
+					self.cpu.enqueue(p)
 
 			# Look for process in devices and terminate when found
 			if self.cpu.contains(pid):
