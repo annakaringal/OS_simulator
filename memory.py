@@ -32,7 +32,7 @@ class LongTermScheduler:
             self.job_pool.enqueue(proc)
             return False
 
-    def kill(self, proc):
+    def terminate(self, proc):
 
         """
         Look for given process in memory or job pool and terminates process.

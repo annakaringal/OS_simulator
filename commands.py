@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 7, 2015
+# Last Updated: 	May 8, 2015
 # Description:		Generates instances of system devices and queues.
 #					Sets up system based on user input for CPU Scheduling
 #					and memory management parameters.
@@ -136,7 +136,7 @@ class SysCommand(cmd.Cmd):
 			# Deallocate memory with long term scheduler
 			# This will also allocate any freed memory to anything in job pool
 			# and return a list of processes that it has allocated memory too
-			new_procs = self.lts.kill(proc)
+			new_procs = self.lts.terminate(proc)
 
 			# Terminate current process
 			self.cpu.terminate()
