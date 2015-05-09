@@ -21,7 +21,7 @@ import io
 import devices
 import queues
 from pcb import PCB
-from memory import LongTermScheduler
+from memory import LongTermScheduler, InvalidProcess
 
 class SysCommand(cmd.Cmd):
 
@@ -156,29 +156,34 @@ class SysCommand(cmd.Cmd):
 			# Print system stats
 			self.print_system_stats()
 
-		except IndexError: 
+		except IndexError as e: 
 			print io.nothing_in_cpu()
 
 	def kill(self, pid): 
-		try: # Check to see if positive whole number
-			if isinstance(pid, (int, long)):
-				if pid <= 0: raise ValueError
-			else: raise ValueError
-		except:
+		try:
+			# Check to see if positive whole number
+			print "checking"
+			pid = int(pid)
+			if pid <= 0: raise ValueError
+
+			# Deallocate memory for process and reallocate memory
+			new_procs = self.lts.terminate(pid)
+			for p in new_procs: 
+				self.cpu.enqueue(p)
+
+			# Look for process in devices and terminate when found
+			if self.cpu.contains(pid):
+				self.cpu.terminate(pid)
+			else: 
+				for dev in self.all_devices:
+					if dev.contains(pid): 
+						dev.terminate(pid)
+
+		except ValueError as e:
 			print io.err("Please enter a valid positive integer")
-
-		# Look for process in, ready queue and devices
-
-
-		# Process found: Dequeue process from device 
-
-		# Process found: remove from job pool
-
-		# Reallocate freed memory
-
-		# Delete process
-
-		# Process not found: Error
+		except InvalidProcess: 
+			# Process not found in job pool or in memory
+			print io.err("Process does not exist")
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
@@ -313,4 +318,3 @@ class SysCommand(cmd.Cmd):
 	do_S = do_s
 	do_Q = do_q
 	do_H = do_h
-
