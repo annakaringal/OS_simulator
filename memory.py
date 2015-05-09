@@ -46,13 +46,13 @@ class LongTermScheduler:
             # Deallocate process
             self.ram.deallocate(proc)
 
+            procs  = []
             # Try to allocate any processes in job queue
-            procs = []
-            while self.ram.free_mem: 
-                try: 
-                    procs.append(self.job_pool.dequeue(ram.free_mem))
+            while self.ram.free_mem() > 0: 
+                try:
+                    procs.append(self.job_pool.dequeue_largest(self.ram.free_mem()))
                     self.ram.allocate(procs[-1])
-                except: 
+                except (InsufficientMemory, InvalidProcess): 
                     # Either no more jobs or not enough free mem to allocate
                     # any processes in queue
                     break
@@ -89,7 +89,7 @@ class Memory:
         self._free_frames = deque(self._frame_table.keys())
 
     def free_mem(self):
-        return len(self._free_frames) * self._page_size
+        return int(len(self._free_frames) * self._page_size)
 
     def page_size(self): 
         return self._page_size
@@ -155,7 +155,7 @@ class JobPool(Queue):
         insort(self._q, proc)
         print proc.status()
 
-    def dequeue(self, free_mem):
+    def dequeue_largest(self, free_mem):
         """
         Dequeue and return largest job in job pool that will fit in given 
         memory.
@@ -172,7 +172,6 @@ class JobPool(Queue):
 
         # No process in queue will fit in given memory
         raise InvalidProcess()
-
 
     def dequeue(self, proc):
         """ Dequeue and return given process from job pool """
