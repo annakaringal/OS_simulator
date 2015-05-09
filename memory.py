@@ -66,6 +66,7 @@ class LongTermScheduler:
             # Return no processes, because no new processes were allocated mto
             # free memory
             try: 
+                print "not in memory"
                 p = self.job_pool.dequeue(pid)
                 del p
                 return None
@@ -184,11 +185,11 @@ class JobPool(Queue):
         if not self._q: 
             raise IndexError
 
-        if (lambda x: x.pid == pid) in self._q: 
-            return self._q.pop(lambda x: x.pid == pid)
-        else: 
-            # Process not in queue
-            raise InvalidProcess
+        for p in self._q:
+                if p.pid == pid:
+                    return self._q.pop(self._q.index(p))
+        # Process not in queue
+        raise InvalidProcess
 
     def snapshot(self):
         if self._q:
