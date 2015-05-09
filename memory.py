@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             memory.py
 # Created:          May 4, 2015
-# Last Updated:     May 8, 2015
+# Last Updated:     May 9, 2015
 # Description:      Classes for long term scheduling and memory management
 
 from __future__ import division
@@ -32,7 +32,7 @@ class LongTermScheduler:
             self.job_pool.enqueue(proc)
             return False
 
-    def terminate(self, proc):
+    def terminate(self, pid):
 
         """
         Look for given process in memory or job pool and terminates process.
@@ -40,11 +40,12 @@ class LongTermScheduler:
         in job pool, until no more freed memory can be allocated. Returns list
         of new processes allocated
         Else, if process was in job pool, removes from job pool, terminates
-        process and 
+        process and returns None.
+        Precondition: pid is a valid integer
         """
-        if self.ram.is_in_mem(proc):
+        if self.ram.is_in_mem(pid):
             # Deallocate process
-            self.ram.deallocate(proc)
+            self.ram.deallocate(pid)
 
             procs  = []
             # Try to allocate any processes in job queue
@@ -64,11 +65,14 @@ class LongTermScheduler:
             # Return no processes, because no new processes were allocated mto
             # free memory
             try: 
-                p = self.job_pool.dequeue(proc)
+                p = self.job_pool.dequeue(pid)
                 del p
                 return None
             except: 
                 print io.error("Process could not be found")
+
+    def kill(self, proc):
+        pass
 
     def show_job_pool(self):
         self.job_pool.snapshot()
@@ -94,8 +98,8 @@ class Memory:
     def page_size(self): 
         return self._page_size
 
-    def is_in_mem(self, proc):
-        return proc.pid in self._frame_table.values()
+    def is_in_mem(self, pid):
+        return pid in self._frame_table.values()
 
     def allocate(self, proc):
         """
@@ -112,17 +116,17 @@ class Memory:
             self._frame_table[self._free_frames.popleft()] = proc.pid
 
 
-    def deallocate(self, proc):
+    def deallocate(self, pid):
         """
         Deallocates framesin mem for a given process and updates frame table & 
         free frames list. If process not in memory, throws exception. 
         """
 
-        if not proc.pid in self._frame_table.values():
+        if not pid in self._frame_table.values():
             raise InvalidProcess
 
         for k,v in self._frame_table.iteritems(): 
-            if v is proc.pid: 
+            if v is pid: 
                 self._frame_table[k] = None
                 self._free_frames.append(k)
 
@@ -173,14 +177,14 @@ class JobPool(Queue):
         # No process in queue will fit in given memory
         raise InvalidProcess()
 
-    def dequeue(self, proc):
+    def dequeue(self, pid):
         """ Dequeue and return given process from job pool """
         # Nothing to dequeue
         if not self._q: 
             raise IndexError
 
-        if (lambda x: x.pid == proc.pid) in self._q: 
-            return self._q.pop(lambda x: x.pid == proc.pid)
+        if (lambda x: x.pid == pid) in self._q: 
+            return self._q.pop(lambda x: x.pid == pid)
         else: 
             # Process not in queue
             raise InvalidProcess

@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 8, 2015
+# Last Updated: 	May 9, 2015
 # Description:		Generates instances of system devices and queues.
 #					Sets up system based on user input for CPU Scheduling
 #					and memory management parameters.
@@ -136,7 +136,7 @@ class SysCommand(cmd.Cmd):
 			# Deallocate memory with long term scheduler
 			# This will also allocate any freed memory to anything in job pool
 			# and return a list of processes that it has allocated memory too
-			new_procs = self.lts.terminate(proc)
+			new_procs = self.lts.terminate(proc.pid)
 
 			# Terminate current process
 			self.cpu.terminate()
@@ -160,7 +160,25 @@ class SysCommand(cmd.Cmd):
 			print io.nothing_in_cpu()
 
 	def kill(self, pid): 
-		pass
+		try: # Check to see if positive whole number
+			if isinstance(pid, (int, long)):
+				if pid <= 0: raise ValueError
+			else: raise ValueError
+		except:
+			print io.err("Please enter a valid positive integer")
+
+		# Look for process in, ready queue and devices
+
+
+		# Process found: Dequeue process from device 
+
+		# Process found: remove from job pool
+
+		# Reallocate freed memory
+
+		# Delete process
+
+		# Process not found: Error
 
 	## User Command: Queue Snapshot
 	def do_s(self, args):
