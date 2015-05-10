@@ -226,11 +226,17 @@ class PCB:
         """
         self.params["file"] = raw_input("File Name >>> ")
 
-        l = io.get_valid_hex("Starting Memory Location")
-        offset = int(l % self.pg_size)
-        pg = int(floor(l / self.pg_size))
-        self.params["log"] = l
-        self.params["phys"] = (self.pg_size * self.page_table[pg]) + offset
+        set_loc = False
+        while not set_loc: 
+            l = io.get_valid_hex("Starting Memory Location in Hex")
+            if l < self.proc_size: 
+                set_loc = True
+                offset = int(l % self.pg_size)
+                pg = int(floor(l / self.pg_size))
+                self.params["log"] = l
+                self.params["phys"] = (self.pg_size * self.page_table[pg]) + offset
+            else: 
+                print io.err("Invalid starting memory location")
 
     def set_read_write_params(self, dev_type):
         """
@@ -254,11 +260,11 @@ class PCB:
             while not set_len:
                 l = io.get_valid_int("File Length")
 
-                if l + self.params["log"]<= self.proc_size: 
+                if l + self.params["log"]< self.proc_size: 
                     self.params["len"] = l
                     set_len = True
                 else: 
-                    print io.err("Invalid length (too long).")
+                    print io.err("Invalid length (too long)")
 
 
     def set_cylinder_params(self, max_num_cylinders):
