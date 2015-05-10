@@ -57,8 +57,6 @@ class LongTermScheduler:
                     # Either no more jobs or not enough free mem to allocate
                     # any processes in queue
                     break
-
-
             return procs
 
         else:
@@ -88,10 +86,9 @@ class Memory:
     def __init__(self, s, p):
         self._size = s
         self._page_size = p
-        self._num_of_pages = int(s/p)
 
         # Create empty frame table & free frame list containing all frames
-        self._frame_table = dict.fromkeys(range(self._num_of_pages))
+        self._frame_table = dict.fromkeys(map(lambda x: hex(x), range(int(s/p))))
         self._free_frames = deque(self._frame_table.keys())
 
     def free_mem(self):
@@ -138,16 +135,16 @@ class Memory:
         print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
         for frame, proc in self._frame_table.iteritems():
-            print " 0x{:<10}{:<10}".format(frame, proc if proc else "None")
+            print " {:<10}{:<10}".format(frame, proc if proc else "None")
 
         print io.snapshot_header("Free Frames")
         n = 0
         for f in self._free_frames:
             n += 1
             if (n%6) is 0: # Print 6 frames per row
-                print "0x{:<10}".format(f)
+                print "{:<10}".format(f)
             else:    
-                print "0x{:<10}".format(f),
+                print "{:<10}".format(f),
 
 class JobPool(Queue):
 
