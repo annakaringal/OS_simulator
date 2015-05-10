@@ -74,9 +74,10 @@ class PCB:
         print "{:<3}".format(str(self.pid)),
 
         for key, val in self.params.iteritems():
-            if self.proc_loc.lower()[0]!="d" and key=="cylinder":
-                continue
-            print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
+            if key == "log" or key == "phys":
+                print"{:^{w}}".format(hex(int(val)) if val else "--", w=len(key)+2),
+            else:
+                print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
         print "{:^5}".format(str(int(self.avg_burst_time()))),
         print "{:^5}".format(str(sum(self.burst_history))),
@@ -100,19 +101,12 @@ class PCB:
         Prints name of system call parameters and PCB attributes in formatted
         fashion, on a single line
         """
-        print "{:<4}{:^30}|{:^5}|{:^18}|{:^18}".format("", "FILE", " DISK", "CPU BURST", "MEM")
+        print "{:<4}{:^30}|{:^5}|{:^11}|{:^25}".format("", "FILE", " DISK", "CPU BURST", "MEM")
         print "{:<4}".format("PID"),
         for key,val in self.params.iteritems():
-            if self.proc_loc.lower()[0]!="d" and key=="cylinder":
-                continue
             print"{:<{w}}|".format(str(key).replace("_"," ").capitalize()[:10], w=len(key)+1),
 
-        print "{:^4}|".format("Avg"),
-        print "{:^4}|".format("Tot"),
-        print "{:^5}|".format("Size"), 
-        print "{:^5}|".format ("Page"), 
-        print "{:^6}".format ("Frame")
-
+        print "{:^4}|{:^5}|{:^6}|{:^8}|{:^8}".format("Avg", "Tot", "Size","Page", "Frame")
 
     ## Methods to compare PCBs
 
@@ -256,12 +250,15 @@ class PCB:
                     print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
-            l = io.get_valid_int("File Length")
+            set_len = False
+            while not set_len:
+                l = io.get_valid_int("File Length")
 
-            if l + self.params["log"]<= self.proc_size: 
-                self.params["len"] = l
-            else: 
-                pass
+                if l + self.params["log"]<= self.proc_size: 
+                    self.params["len"] = l
+                    set_len = True
+                else: 
+                    print io.err("Invalid length (too long).")
 
 
     def set_cylinder_params(self, max_num_cylinders):
