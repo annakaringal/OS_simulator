@@ -314,9 +314,12 @@ class CPU(PriorityQueue):
         print io.snapshot_header("ready")
         PriorityQueue.snapshot(self)
         if self.active: 
-            print "\n" + "ACTIVE IN CPU: {a!s} (Estimated time remaining: {b!s})".format(a=str(self.active).capitalize(), b=str(self.active.next_est_burst))
+            print " ACTIVE IN CPU (Est time remaining: {0:}) ".format(str(self.active.next_est_burst)).center(78, "=")
+            self.active.headers()
+            print io.ruler()
+            self.active.snapshot()
         else:
-            print "\n" + "No active process in the CPU"
+            print "\n" + "No active process in the CPU".center(78)
 
     def get_active_process(self):
         """ Returns copy of active process in CPU """ 

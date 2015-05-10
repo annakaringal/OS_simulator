@@ -14,7 +14,7 @@ import sys
 from functools import total_ordering
 import io
 
-param_fields = ["file_name","mem_loc","rw","file_len", "cylinder"]
+param_fields = ["file","loc","rw","len", "cyl"]
 
 @total_ordering
 class PCB:
@@ -68,20 +68,29 @@ class PCB:
         Prints PCB attributes and any current system call parameters in a 
         formatted fashion, on a single line
         """
-        print "{:<4}".format(str(self.pid)),
+        print "{:<3}".format(str(self.pid)),
 
         for key, val in self.params.iteritems():
             if self.proc_loc.lower()[0]!="d" and key=="cylinder":
                 continue
-            print"{:^{w}}".format(str(val)[:10], w=len(key)+1),
+            print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
-        print "{:^9}".format(str(self.avg_burst_time())),
-        print "{:^12}".format(str(sum(self.burst_history))),
-        if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower()== "CPU":
-            print "{:^14}".format(str(self.next_est_burst)),
-        print "\n",
+        print "{:^10}".format(str(self.avg_burst_time())),
+        print "{:^10}".format(str(sum(self.burst_history))),
+        print "{:^5}".format(str(self.proc_size)),
+
+        self.display_page_table()
+
+    def display_page_table(self):
+        l = 0
         for page,frame in self.page_table.iteritems(): 
-            print "page: {:<10}frame: {:<10}".format(page,frame)
+            l += 1
+            if l > 1: 
+                print "{:^8}{:^8}".format(page,frame).rjust(78)
+            else: 
+                print "{:^8}{:^8}".format(page,frame)
+        print ""
+
 
     def headers(self):
         """
@@ -92,13 +101,13 @@ class PCB:
         for key,val in self.params.iteritems():
             if self.proc_loc.lower()[0]!="d" and key=="cylinder":
                 continue
-            print"{:<{w}}".format(str(key).replace("_"," ").capitalize()[:10], w=len(key)+1),
+            print"{:<{w}}|".format(str(key).replace("_"," ").capitalize()[:10], w=len(key)+1),
 
-        print "{:9}".format("Avg Burst"),
-        print "{:<12}".format("Tot CPU Time"),
-        if self.proc_loc.lower()[0] == "r":
-            print "{:^14}".format("Next Est Burst"),
-        print "\n",
+        print "{:^10}|".format("Avg Burst"),
+        print "{:^8}|".format("Tot CPU"),
+        print "{:^5}|".format("Size"), 
+        print "{:^5}|".format ("Page"), 
+        print "{:^6}".format ("Frame")
 
 
     ## Methods to compare PCBs
@@ -217,8 +226,8 @@ class PCB:
         """
         Sets system call params for file name & starting memory location
         """
-        self.params["file_name"] = raw_input("File Name >>> ")
-        self.params["mem_loc"] = io.get_valid_int("Starting Memory Location")
+        self.params["file"] = raw_input("File Name >>> ")
+        self.params["loc"] = io.get_valid_int("Starting Memory Location")
 
     def set_read_write_params(self, dev_type):
         """
@@ -238,7 +247,7 @@ class PCB:
                     print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
-            self.params["file_len"] = io.get_valid_int("File Length")
+            self.params["len"] = io.get_valid_int("File Length")
 
     def set_cylinder_params(self, max_num_cylinders):
         """
@@ -248,11 +257,11 @@ class PCB:
         Precondition: Process is in disk drive
         """
         while self.params["cylinder"] == None:
-            cyl = io.get_valid_int("Cylinder")
-            if cyl > max_num_cylinders: 
+            c = io.get_valid_int("Cylinder")
+            if c > max_num_cylinders: 
                 print "Invalid cylinder number. Please try again."
             else: 
-                self.params["cylinder"] = cyl
+                self.params["cyl"] = c
 
     def clear_params(self):
         """ Clears all system call & read/write params """

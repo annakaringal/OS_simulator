@@ -190,12 +190,18 @@ class JobPool(Queue):
         raise InvalidProcess
 
     def snapshot(self):
+        print " JOB POOL ".center(78, "-")
         if self._q:
-            print "JOB POOL: ",
+            n=0
             for p in self._q: 
-                print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] ",
+                n += 1
+                if (n%6) is 0: # Print 6 frames per row
+                    print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] "
+                else:
+                    print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] ",
+            print "\n"
         else: 
-            print "Job pool is empty"
+            print "Job pool is empty".center(78)
 
 class InsufficientMemory(Exception):
     """
