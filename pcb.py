@@ -78,7 +78,7 @@ class PCB:
                 continue
             print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
-        print "{:^5}".format(str(self.avg_burst_time())),
+        print "{:^5}".format(str(int(self.avg_burst_time())),
         print "{:^5}".format(str(sum(self.burst_history))),
         print "{:^6}".format(str(self.proc_size)),
 
@@ -89,9 +89,9 @@ class PCB:
         for page,frame in self.page_table.iteritems(): 
             l += 1
             if l > 1: 
-                print "{:^8}{:^8}".format(page,frame).rjust(76)
+                print "{:^8}{:^8}".format(hex(page),hex(frame)).rjust(76)
             else: 
-                print "{:^8}{:^8}".format(page,frame)
+                print "{:^8}{:^8}".format(hex(page),hex(frame)
         print ""
 
 
@@ -231,9 +231,6 @@ class PCB:
         Sets system call params for file name & starting memory location
         """
         self.params["file"] = raw_input("File Name >>> ")
-        for p, f in self.page_table.items():
-            print type(p),
-            print p
 
         l = io.get_valid_hex("Starting Memory Location")
         offset = int(l % self.pg_size)
