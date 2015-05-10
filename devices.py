@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             devices.py
 # Created:          February 27, 2015
-# Last Updated:     May 9, 2015
+# Last Updated:     May 10, 2015
 # Description:      Classes for different devices on the system. Contains
 #                   methods allowing user to see/change what process(es) a
 #                   device is running or are in the device queue. 
@@ -157,8 +157,14 @@ class DiskDrive(PriorityQueue):
     def terminate(self, pid):
         if self._q1.contains(pid): 
             self._q1.terminate(pid)
+            if self._q1.is_frozen() and self._q1.empty():
+                self._q1.unfreeze()
+                self._q2.freeze()
         elif self._q2.contains(pid):
             self._q2.terminate(pid)
+            if self._q2.is_frozen() and self._q2.empty():
+                self._q2.unfreeze()
+                self._q1.freeze()
         else:
             raise IndexError
 
@@ -181,14 +187,14 @@ class DiskDrive(PriorityQueue):
             print '{:^78}'.format("EMPTY: No processes in queue")
         else:
             if self._q1.is_frozen():
-                print io.snapshot_header("PROCESSING [FROZEN]", " ")
+                print io.snapshot_header("PROCESSING [FROZEN]", "-")
                 self._q1.snapshot()
-                print io.snapshot_header("NEW REQUESTS", " ")
+                print io.snapshot_header("NEW REQUESTS", "-")
                 self._q2.snapshot()
             else:
-                print io.snapshot_header("PROCESSING [FROZEN]", " ")
+                print io.snapshot_header("PROCESSING [FROZEN]", "-")
                 self._q2.snapshot()
-                print io.snapshot_header("NEW REQUESTS", " ")
+                print io.snapshot_header("NEW REQUESTS", "-")
                 self._q1.snapshot()
 
 class CPU(PriorityQueue): 
