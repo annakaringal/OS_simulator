@@ -169,13 +169,6 @@ class SysCommand(cmd.Cmd):
 			pid = int(pid)
 			if not isinstance(pid, (int, long)) or pid <= 0: raise ValueError
 
-			# Deallocate memory for process and reallocate memory
-			# No need to update burst time
-			new_procs = self.lts.terminate(pid)
-			if new_procs: 
-				for p in new_procs: 
-					self.cpu.enqueue(p, False)
-
 			# Look for process in devices and terminate when found
 			if self.cpu.contains(pid):
 				self.cpu.terminate(pid)
@@ -188,6 +181,13 @@ class SysCommand(cmd.Cmd):
 						if self.cpu.active: 
 							elapsed = io.get_valid_int("Time since last interrupt")
 							self.cpu.active.update_burst_time(elapsed)
+
+			# Deallocate memory for process and reallocate memory
+			# No need to update burst time
+			new_procs = self.lts.terminate(pid)
+			if new_procs: 
+				for p in new_procs: 
+					self.cpu.enqueue(p, False)
 
 		except ValueError as e:
 			print io.err("Please enter a valid positive integer")
