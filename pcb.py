@@ -78,7 +78,7 @@ class PCB:
                 continue
             print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
-        print "{:^5}".format(str(int(self.avg_burst_time())),
+        print "{:^5}".format(str(int(self.avg_burst_time()))),
         print "{:^5}".format(str(sum(self.burst_history))),
         print "{:^6}".format(str(self.proc_size)),
 
@@ -91,7 +91,7 @@ class PCB:
             if l > 1: 
                 print "{:^8}{:^8}".format(hex(page),hex(frame)).rjust(76)
             else: 
-                print "{:^8}{:^8}".format(hex(page),hex(frame)
+                print "{:^8}{:^8}".format(hex(page),hex(frame))
         print ""
 
 

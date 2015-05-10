@@ -135,9 +135,9 @@ class Memory:
         print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
         for frame, proc in self._frame_table.iteritems():
-            print "{:^10}".format(frame),
+            print "{:^10}".format(hex(frame)),
             if proc: 
-                print "{:^8}{:^12}".format(proc[0], proc[1])
+                print "{:^8}{:^12}".format(hex(proc[0]), hex(proc[1]))
             else: 
                 print "{:^8}".format("None")
 
@@ -146,9 +146,9 @@ class Memory:
         for f in self._free_frames:
             n += 1
             if (n%6) is 0: # Print 6 frames per row
-                print "{:<10}".format(f)
+                print "{:<10}".format(hex(f))
             else:    
-                print "{:<10}".format(f),
+                print "{:<10}".format(hex(f)),
 
 class JobPool(Queue):
 
