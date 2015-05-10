@@ -65,7 +65,11 @@ class LongTermScheduler:
             # free memory
             try: 
                 p = self.job_pool.dequeue(pid)
-                print str(p) + " Terminated"
+                
+                # Print stats
+                print "\n" + "{:-^78}".format(" Terminated Process Report ")
+                print "PID: {:<4} Avg CPU Burst Time: {:<5} Total CPU Time: {:<5}".format(p.pid, p.avg_burst_time(), p.tot_burst_time()).center(78," ")
+                
                 del p
                 return None
             except: 
