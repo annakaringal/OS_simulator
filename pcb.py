@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 9, 2015
+# Last Updated:     May 10, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -12,9 +12,10 @@
 from __future__ import division
 import sys
 from functools import total_ordering
+from math import floor
 import io
 
-param_fields = ["file","loc","rw","len", "cyl"]
+param_fields = ["file","log", "phys" ,"rw","len", "cyl"]
 
 @total_ordering
 class PCB:
@@ -29,6 +30,7 @@ class PCB:
         self.proc_loc = loc
         self.proc_size = size
         self.proc_pages = pages
+        self.pg_size = size / pages
 
         # Set params & burst history
         self.params = dict.fromkeys(param_fields)
@@ -39,7 +41,7 @@ class PCB:
         self.curr_burst = 0
 
         # Set up empty page table
-        self.page_table = dict.fromkeys(map(lambda x: hex(x), range(pages)))
+        self.page_table = dict.fromkeys(range(pages))
 
     def set_proc_loc(self, p_loc):
         """ Sets location of process, i.e. which queue/device it is in"""
@@ -68,6 +70,7 @@ class PCB:
         Prints PCB attributes and any current system call parameters in a 
         formatted fashion, on a single line
         """
+
         print "{:<3}".format(str(self.pid)),
 
         for key, val in self.params.iteritems():
@@ -75,9 +78,9 @@ class PCB:
                 continue
             print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
-        print "{:^10}".format(str(self.avg_burst_time())),
-        print "{:^10}".format(str(sum(self.burst_history))),
-        print "{:^5}".format(str(self.proc_size)),
+        print "{:^5}".format(str(self.avg_burst_time())),
+        print "{:^5}".format(str(sum(self.burst_history))),
+        print "{:^6}".format(str(self.proc_size)),
 
         self.display_page_table()
 
@@ -86,7 +89,7 @@ class PCB:
         for page,frame in self.page_table.iteritems(): 
             l += 1
             if l > 1: 
-                print "{:^8}{:^8}".format(page,frame).rjust(78)
+                print "{:^8}{:^8}".format(page,frame).rjust(76)
             else: 
                 print "{:^8}{:^8}".format(page,frame)
         print ""
@@ -97,14 +100,15 @@ class PCB:
         Prints name of system call parameters and PCB attributes in formatted
         fashion, on a single line
         """
+        print "{:<4}{:^30}|{:^5}|{:^18}|{:^18}".format("", "FILE", " DISK", "CPU BURST", "MEM")
         print "{:<4}".format("PID"),
         for key,val in self.params.iteritems():
             if self.proc_loc.lower()[0]!="d" and key=="cylinder":
                 continue
             print"{:<{w}}|".format(str(key).replace("_"," ").capitalize()[:10], w=len(key)+1),
 
-        print "{:^10}|".format("Avg Burst"),
-        print "{:^8}|".format("Tot CPU"),
+        print "{:^4}|".format("Avg"),
+        print "{:^4}|".format("Tot"),
         print "{:^5}|".format("Size"), 
         print "{:^5}|".format ("Page"), 
         print "{:^6}".format ("Frame")
@@ -127,7 +131,7 @@ class PCB:
 
         # If process is in disk drive, compare using cylinder number
         elif self.proc_loc.lower()[0] is "d":
-            return self.params["cylinder"] == other.params["cylinder"]
+            return self.params["cyl"] == other.params["cyl"]
 
         # If process is in job pool, compare using process size
         elif self.proc_loc.lower()[0] is "j":
@@ -151,7 +155,7 @@ class PCB:
         
         # If process is in disk drive, compare using cylinder number
         elif self.proc_loc.lower()[0] is "d":
-            return self.params["cylinder"] < other.params["cylinder"]
+            return self.params["cyl"] < other.params["cyl"]
 
         # If process is in job pool, compare using process size
         elif self.proc_loc.lower()[0] is "j":
@@ -227,7 +231,15 @@ class PCB:
         Sets system call params for file name & starting memory location
         """
         self.params["file"] = raw_input("File Name >>> ")
-        self.params["loc"] = io.get_valid_int("Starting Memory Location")
+        for p, f in self.page_table.items():
+            print type(p),
+            print p
+
+        l = io.get_valid_hex("Starting Memory Location")
+        offset = int(l % self.pg_size)
+        pg = int(floor(l / self.pg_size))
+        self.params["log"] = l
+        self.params["phys"] = (self.pg_size * self.page_table[pg]) + offset
 
     def set_read_write_params(self, dev_type):
         """
@@ -247,7 +259,13 @@ class PCB:
                     print "Please enter either 'r', 'read', 'w' or 'write'"
 
         if self.params["rw"] == "w":
-            self.params["len"] = io.get_valid_int("File Length")
+            l = io.get_valid_int("File Length")
+
+            if l + self.params["log"]<= self.proc_size: 
+                self.params["len"] = l
+            else: 
+                pass
+
 
     def set_cylinder_params(self, max_num_cylinders):
         """
@@ -256,7 +274,7 @@ class PCB:
 
         Precondition: Process is in disk drive
         """
-        while self.params["cylinder"] == None:
+        while self.params["cyl"] == None:
             c = io.get_valid_int("Cylinder")
             if c > max_num_cylinders: 
                 print "Invalid cylinder number. Please try again."
