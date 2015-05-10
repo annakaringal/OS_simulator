@@ -110,10 +110,11 @@ class Memory:
             raise InsufficientMemory(proc)
             
         # For every page needed for process, insert into first free frame from
-        # free frames list and update free frames list\
-        for p in range(int(ceil(proc.proc_size / self._page_size))):
-            self._frame_table[self._free_frames.popleft()] = proc.pid
-
+        # free frames list and update free frames list
+        for p in proc.page_table.keys():
+            f = self._free_frames.popleft()
+            self._frame_table[f] = (proc.pid, p)
+            proc.allocate_memory(p,f)
 
     def deallocate(self, pid):
         """
