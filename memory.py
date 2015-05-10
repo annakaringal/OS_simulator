@@ -87,7 +87,7 @@ class Memory:
         self._page_size = p
 
         # Create empty frame table & free frame list containing all frames
-        self._frame_table = dict.fromkeys(map(lambda x: hex(x), range(int(s/p))))
+        self._frame_table = dict.fromkeys(range(int(s/p)))
         self._free_frames = deque(self._frame_table.keys())
 
     def free_mem(self):
