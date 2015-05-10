@@ -65,6 +65,7 @@ class LongTermScheduler:
             # free memory
             try: 
                 p = self.job_pool.dequeue(pid)
+                print str(p) + " Terminated"
                 del p
                 return None
             except: 

@@ -34,7 +34,7 @@ class Queue:
 
     ## Returns true if queue contains a process with given PID
     def contains(self, pid):
-        return any(p.pid == pid for p in self._q)
+        return any(p.pid == pid for p in self._q) if self._q else False
 
     ## Set PCB attributes
     def record_burst(self, proc):
