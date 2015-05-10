@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 9, 2015
+# Last Updated:     May 10, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -256,7 +256,7 @@ class PCB:
 
         Precondition: Process is in disk drive
         """
-        while self.params["cylinder"] == None:
+        while self.params["cyl"] == None:
             c = io.get_valid_int("Cylinder")
             if c > max_num_cylinders: 
                 print "Invalid cylinder number. Please try again."
