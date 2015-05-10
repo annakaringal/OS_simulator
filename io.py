@@ -51,7 +51,7 @@ def get_valid_int(prompt, err_msg="Please enter a valid positive integer"):
 				is_int = True
 				return num
 			else: raise ValueError
-		except ValueError:
+		except:
 			print err(err_msg)
 
 def get_valid_hex(prompt, err_msg="Please enter a valid hexadecimal number"):
@@ -61,6 +61,8 @@ def get_valid_hex(prompt, err_msg="Please enter a valid hexadecimal number"):
             num = raw_input(prompt + " >>> ")
             if re.match("[0-9a-fA-F]", str(num)):
                 is_hex = True
+                num = "0x" + num
+                num = int(num, 16)
                 return num
             else:
                 raise ValueError

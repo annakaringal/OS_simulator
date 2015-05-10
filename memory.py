@@ -64,7 +64,6 @@ class LongTermScheduler:
             # Return no processes, because no new processes were allocated mto
             # free memory
             try: 
-                print "not in memory"
                 p = self.job_pool.dequeue(pid)
                 del p
                 return None
@@ -98,7 +97,7 @@ class Memory:
         return self._page_size
 
     def is_in_mem(self, pid):
-        return pid in self._frame_table.values()
+        return any(pid in proc for proc in self._frame_table.values())
 
     def allocate(self, proc):
         """
@@ -122,16 +121,16 @@ class Memory:
         free frames list. If process not in memory, throws exception. 
         """
 
-        if not pid in self._frame_table.values():
+        if not self.is_in_mem(pid):
             raise InvalidProcess
 
         for k,v in self._frame_table.iteritems(): 
-            if v is pid: 
-                self._frame_table[k] = None
-                self._free_frames.append(k)
+            if v:
+                if v[0] is pid: 
+                    self._frame_table[k] = None
+                    self._free_frames.append(k)
 
     def snapshot(self):
-        #TODO: Also print corresponding page
         print io.snapshot_header("Frame Table")
         print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
@@ -199,7 +198,7 @@ class JobPool(Queue):
             n=0
             for p in self._q: 
                 n += 1
-                if (n%6) is 0: # Print 6 frames per row
+                if (n%5) is 0: # Print 5 jobs per row
                     print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] "
                 else:
                     print "P#" + str(p.pid) + " [Size: " + str(p.proc_size) + "] ",
