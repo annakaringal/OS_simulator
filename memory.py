@@ -64,7 +64,6 @@ class LongTermScheduler:
             # Return no processes, because no new processes were allocated mto
             # free memory
             try: 
-                print "not in memory"
                 p = self.job_pool.dequeue(pid)
                 del p
                 return None
@@ -132,12 +131,15 @@ class Memory:
                     self._free_frames.append(k)
 
     def snapshot(self):
-        #TODO: Also print corresponding page
         print io.snapshot_header("Frame Table")
         print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
         for frame, proc in self._frame_table.iteritems():
-            print " {:<10}{:<10}".format(frame, proc if proc else "None")
+            print "{:^10}".format(frame),
+            if proc: 
+                print "{:^8}{:^12}".format(proc[0], proc[1])
+            else: 
+                print "{:^8}".format("None")
 
         print io.snapshot_header("Free Frames")
         n = 0
