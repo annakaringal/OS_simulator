@@ -206,6 +206,9 @@ class CPU(PriorityQueue):
         return True if self.active else False
 
     def contains(self, pid): 
+        # CPU is empty
+        if not self.active: 
+            return False
         if pid == self.active.pid: 
             return True
         else: 
@@ -213,7 +216,7 @@ class CPU(PriorityQueue):
 
     ## Methods to modify active process in CPU
 
-    def enqueue(self,proc):
+    def enqueue(self, proc, updateburst=True):
         """
         Adds process to back of ready queue and updates PCB status/location 
         """
@@ -223,11 +226,12 @@ class CPU(PriorityQueue):
             proc.set_proc_loc(self._dev_name)
             self.active = proc
         else:
-            # Prompt for time since last interrupt
-            elapsed = io.get_valid_int("Time since last interrupt")
+            if updateburst: 
+                # Prompt for time since last interrupt
+                elapsed = io.get_valid_int("Time since last interrupt")
 
-            # Update burst time for current process
-            self.active.update_burst_time(elapsed)
+                # Update burst time for current process
+                self.active.update_burst_time(elapsed)
 
             # Insert  into ready queue
             proc.set_proc_loc("ready")
@@ -264,18 +268,21 @@ class CPU(PriorityQueue):
         """
         proc = None
         if self.active: 
-
             # Terminate active process if no pid given or if active process has
             # given pid
+
             if not pid or self.active.pid == pid: 
                 proc = self.active 
                 self.ready_to_CPU()
+                self.record_burst(proc)
 
             else: # Look for process in ready queue and remove
                 proc = PriorityQueue.pop(self, pid)
-                print proc
 
-            self.record_burst(proc)
+                # Prompt for time since last interrupt
+                # Update burst time for active process
+                elapsed = io.get_valid_int("Time since last interrupt")
+                self.active.update_burst_time(elapsed)
 
             # Print stats
             print "\n" + "{:-^78}".format(" Terminated Process Report ")
