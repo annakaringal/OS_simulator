@@ -28,6 +28,7 @@ class PCB:
         self.pid = id_num
         self.proc_loc = loc
         self.proc_size = size
+        self.proc_pages = pages
 
         # Set params & burst history
         self.params = dict.fromkeys(param_fields)
@@ -79,7 +80,8 @@ class PCB:
         if self.proc_loc.lower()[0] == "r" or self.proc_loc.lower()== "CPU":
             print "{:^14}".format(str(self.next_est_burst)),
         print "\n",
-
+        for page,frame in self.page_table.iteritems(): 
+            print "page: {:<10}frame: {:<10}".format(page,frame)
 
     def headers(self):
         """
@@ -202,8 +204,15 @@ class PCB:
         """
         self.curr_burst = 0
 
-    ## Setting/clearing system call params for pcb
+    ## Allocating Memory
+    def allocate_memory(self, page, frame): 
+        if page in self.page_table:
+            self.page_table[page] = frame
+        else: 
+            raise IndexError
 
+
+    ## Setting/clearing system call params for pcb
     def set_syst_call_params(self):
         """
         Sets system call params for file name & starting memory location
