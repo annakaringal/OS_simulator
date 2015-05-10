@@ -12,7 +12,7 @@
 from __future__ import division
 import sys
 from functools import total_ordering
-from math import floor
+from math import floor, ceil
 import io
 
 param_fields = ["file","log", "phys" ,"rw","len", "cyl"]
@@ -30,7 +30,7 @@ class PCB:
         self.proc_loc = loc
         self.proc_size = size
         self.proc_pages = pages
-        self.pg_size = size / pages
+        self.pg_size = int(ceil(size / pages))
 
         # Set params & burst history
         self.params = dict.fromkeys(param_fields)
@@ -234,6 +234,8 @@ class PCB:
                 offset = int(l % self.pg_size)
                 pg = int(floor(l / self.pg_size))
                 self.params["log"] = l
+                p = (self.pg_size * self.page_table[pg]) + offset
+                print p
                 self.params["phys"] = (self.pg_size * self.page_table[pg]) + offset
             else: 
                 print io.err("Invalid starting memory location")
@@ -260,7 +262,7 @@ class PCB:
             while not set_len:
                 l = io.get_valid_int("File Length")
 
-                if l + self.params["log"]< self.proc_size: 
+                if l + self.params["log"] <= self.proc_size: 
                     self.params["len"] = l
                     set_len = True
                 else: 
