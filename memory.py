@@ -97,7 +97,12 @@ class Memory:
         return self._page_size
 
     def is_in_mem(self, pid):
-        return any(pid in proc for proc in filter((lambda x: x == None), self._frame_table.values())
+        for f,p in self._frame_table.items(): 
+            if p:
+                if p[0] is pid: 
+                    return True
+
+        return False
 
     def allocate(self, proc):
         """
@@ -137,7 +142,7 @@ class Memory:
         for frame, proc in self._frame_table.iteritems():
             print "{:^10}".format(hex(frame)),
             if proc: 
-                print "{:^8}{:^12}".format(hex(proc[0]), hex(proc[1]))
+                print "{:^8}{:^12}".format(proc[0], hex(proc[1]))
             else: 
                 print "{:^8}".format("None")
 
