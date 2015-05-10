@@ -75,7 +75,7 @@ class PCB:
 
         for key, val in self.params.iteritems():
             if key == "log" or key == "phys":
-                print"{:^{w}}".format(hex(int(val)) if val else "--", w=len(key)+2),
+                print"{:^{w}}".format(hex(int(val)) if val else ("--" if self.proc_loc.lower()== "cpu" or self.proc_loc.lower() == "ready" else "0x0"), w=len(key)+2),
             else:
                 print"{:^{w}}".format(str(val)[:6] if val else "--", w=len(key)+2),
 
@@ -234,8 +234,6 @@ class PCB:
                 offset = int(l % self.pg_size)
                 pg = int(floor(l / self.pg_size))
                 self.params["log"] = l
-                p = (self.pg_size * self.page_table[pg]) + offset
-                print p
                 self.params["phys"] = (self.pg_size * self.page_table[pg]) + offset
             else: 
                 print io.err("Invalid starting memory location")
