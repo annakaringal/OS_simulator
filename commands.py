@@ -116,7 +116,7 @@ class SysCommand(cmd.Cmd):
 		else: 
 			# Create new process
 			self.pid_count += 1
-			pages = int(ceil(psize / self._page_size))
+			pages = int(ceil(psize / self.page_size))
 			new_proc = PCB(self.pid_count, psize, pages, self.alpha, self.tau)
 
 			# If enough memory, new process can run, else goes to job pool
