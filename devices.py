@@ -273,6 +273,7 @@ class CPU(PriorityQueue):
 
             else: # Look for process in ready queue and remove
                 proc = PriorityQueue.pop(self, pid)
+                print proc
 
             self.record_burst(proc)
 
