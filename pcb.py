@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 7, 2015
+# Last Updated:     May 9, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -19,23 +19,26 @@ param_fields = ["file_name","mem_loc","rw","file_len", "cylinder"]
 @total_ordering
 class PCB:
 
-    def __init__(self, id_num, p_size, alpha, tau, p_loc="ready"): 
+    def __init__(self, id_num, size, pages, alpha, tau, loc="ready"): 
         """
         Initialize with new pid & location, empty system call params.
         Calculate next burst based on given history parameter alpha and inital
         burst estimate tau.
         """
         self.pid = id_num
-        self.proc_loc = p_loc
-        self.proc_size = p_size
+        self.proc_loc = loc
+        self.proc_size = size
 
-        #Set params & burst history
+        # Set params & burst history
         self.params = dict.fromkeys(param_fields)
         self.alpha = alpha
         self.burst_history = []
         self.last_est_burst = tau
         self.next_est_burst = tau
         self.curr_burst = 0
+
+        # Set up empty page table
+        self.page_table = dict.fromkeys(map(lambda x: hex(x), range(pages)))
 
     def set_proc_loc(self, p_loc):
         """ Sets location of process, i.e. which queue/device it is in"""
