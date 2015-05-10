@@ -97,7 +97,7 @@ class Memory:
         return self._page_size
 
     def is_in_mem(self, pid):
-        return any(pid in proc for proc in self._frame_table.values())
+        return any(pid in proc for proc in filter((lambda x: x == None), self._frame_table.values())
 
     def allocate(self, proc):
         """
