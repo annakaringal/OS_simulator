@@ -144,9 +144,10 @@ class SysCommand(cmd.Cmd):
 			self.cpu.terminate()
 
 			# Enqueue all new processes to ready queue
+			# No need to update burst time
 			if new_procs: 
 				for p in new_procs: 
-					self.cpu.enqueue(p)
+					self.cpu.enqueue(p, False)
 
 			# Update system stats with total CPU time for terminated process
 			self.total_cpu_time += proc.tot_burst_time()
@@ -169,18 +170,24 @@ class SysCommand(cmd.Cmd):
 			if not isinstance(pid, (int, long)) or pid <= 0: raise ValueError
 
 			# Deallocate memory for process and reallocate memory
+			# No need to update burst time
 			new_procs = self.lts.terminate(pid)
 			if new_procs: 
 				for p in new_procs: 
-					self.cpu.enqueue(p)
+					self.cpu.enqueue(p, False)
 
 			# Look for process in devices and terminate when found
 			if self.cpu.contains(pid):
 				self.cpu.terminate(pid)
+
 			else: 
 				for dev in self.all_devices:
 					if dev.contains(pid): 
 						dev.terminate(pid)
+
+						if self.cpu.active: 
+							elapsed = io.get_valid_int("Time since last interrupt")
+							self.cpu.active.update_burst_time(elapsed)
 
 		except ValueError as e:
 			print io.err("Please enter a valid positive integer")
