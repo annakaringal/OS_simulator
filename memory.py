@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             memory.py
 # Created:          May 4, 2015
-# Last Updated:     May 9, 2015
+# Last Updated:     May 10, 2015
 # Description:      Classes for long term scheduling and memory management
 
 from __future__ import division
@@ -88,7 +88,7 @@ class Memory:
         self._page_size = p
 
         # Create empty frame table & free frame list containing all frames
-        self._frame_table = dict.fromkeys(map(lambda x: hex(x), range(int(s/p))))
+        self._frame_table = dict.fromkeys(range(int(s/p)))
         self._free_frames = deque(self._frame_table.keys())
 
     def free_mem(self):
@@ -136,7 +136,11 @@ class Memory:
         print "{:^10}{:^10}{:^10}".format("FRAME", "PID", "PAGE")
         print io.ruler()
         for frame, proc in self._frame_table.iteritems():
-            print " {:<10}{:<10}".format(frame, proc if proc else "None")
+            print "{:^10}".format(frame),
+            if proc: 
+                print "{:^8}{:^12}".format(proc[0], proc[1])
+            else: 
+                print "{:^8}".format("None")
 
         print io.snapshot_header("Free Frames")
         n = 0
