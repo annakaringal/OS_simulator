@@ -6,7 +6,7 @@ Simulates how an operating system manages processes and process queues.
 
 **Date Created:** February 27, 2015
 
-**Last Modified:** May 3, 2015
+**Last Modified:** May 10, 2015
 
 ## Usage
 
@@ -24,6 +24,8 @@ where `t(previous)` is the actual previous CPU burst and `Tau` is the estimated 
 
 **Disk Scheduling** is implemented using an FLOOK algorithm. 
 
+**Memory Management* uses paging. 
+
 Once the program exits sys gen mode, the user can input commands to simulate system calls and new processes coming into the system. The user will also be prompted to enter how much time has elapsed between system calls, so that CPU scheduling can properly be implemented.
 
 ## Commands
@@ -38,11 +40,12 @@ Once the program exits sys gen mode, the user can input commands to simulate sys
 
 `P1` -- enter the name of any device in uppercase to simulate the active process in  that device is finished and wants to go back into the ready queue.
 
+`k#`  -- Kill process with pid `#`
+
 `h`  -- Help to see a list of commands
 
 `q` or `Ctrl+D` to quit
 
-## Coming soon
+## Todo
 
-- Memory management simulation using paging
-- Kill command to kill any process
+- Refactor!!
