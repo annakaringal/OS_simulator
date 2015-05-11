@@ -1,6 +1,7 @@
 # Project specific Files
 test.py
 todo.txt
+*.zip
 
 .DS_Store
 .AppleDouble
