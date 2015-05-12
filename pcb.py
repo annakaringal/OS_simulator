@@ -4,7 +4,7 @@
 # Author:           Anna Cristina Karingal
 # Name:             pcb.py
 # Created:          February 27, 2015
-# Last Updated:     May 10, 2015
+# Last Updated:     May 11, 2015
 # Description:      Class for the PCB (Process Control Block) that contains and
 #                   sets all information about a process, its state and any
 #                   parameters passed to it by a system call
@@ -20,7 +20,7 @@ param_fields = ["file","log", "phys" ,"rw","len", "cyl"]
 @total_ordering
 class PCB:
 
-    def __init__(self, id_num, size, pages, alpha, tau, loc="ready"): 
+    def __init__(self, id_num, size, pages, page_size, alpha, tau, loc="ready"): 
         """
         Initialize with new pid & location, empty system call params.
         Calculate next burst based on given history parameter alpha and inital
@@ -29,8 +29,7 @@ class PCB:
         self.pid = id_num
         self.proc_loc = loc
         self.proc_size = size
-        self.proc_pages = pages
-        self.pg_size = int(ceil(size / pages))
+        self.pg_size = page_size
 
         # Set params & burst history
         self.params = dict.fromkeys(param_fields)

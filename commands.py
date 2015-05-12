@@ -4,7 +4,7 @@
 # Author:			Anna Cristina Karingal
 # Name:				commands.py
 # Created: 			February 27, 2015
-# Last Updated: 	May 9, 2015
+# Last Updated: 	May 11, 2015
 # Description:		Generates instances of system devices and queues.
 #					Sets up system based on user input for CPU Scheduling
 #					and memory management parameters.
@@ -108,16 +108,16 @@ class SysCommand(cmd.Cmd):
 		go to job pool. 
 		"""
 
-		psize = io.get_valid_int("Process size")
-		if psize > self.total_mem_size: 
+		procsize = io.get_valid_int("Process size")
+		if procsize > self.total_mem_size: 
 			print io.err("Proccess cannot be larger than total memory")
-		elif psize > self.max_proc_size: 
+		elif procsize > self.max_proc_size: 
 			print io.err("Proccess cannot be larger than maximum process size of " + str(self.max_proc_size))
 		else: 
 			# Create new process
 			self.pid_count += 1
-			pages = int(ceil(psize / self.page_size))
-			new_proc = PCB(self.pid_count, psize, pages, self.alpha, self.tau)
+			pages = int(ceil(procsize / self.page_size))
+			new_proc = PCB(self.pid_count, procsize, pages, self.page_size, self.alpha, self.tau)
 
 			# If enough memory, new process can run, else goes to job pool
 			if self.lts.schedule(new_proc): 
